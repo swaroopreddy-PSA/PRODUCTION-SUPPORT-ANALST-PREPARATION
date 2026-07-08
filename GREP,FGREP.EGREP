@@ -1,0 +1,2034 @@
+# 🐧 Linux GREP, EGREP, and FGREP Commands
+
+This chapter explains:
+
+1. `grep` – Search text using patterns
+2. `egrep` / `grep -E` – Search using Extended Regular Expressions
+3. `fgrep` / `grep -F` – Search fixed text strings
+4. Important options
+5. Regular expressions
+6. Multiple-pattern searching
+7. Recursive searching
+8. Log-analysis examples
+9. PSA real-time scenarios
+10. Ubuntu practice lab
+11. Interview questions
+
+---
+
+# 1. What is `grep`?
+
+`grep` is used to search for matching text.
+
+Simple meaning:
+
+```text
+Find the lines that contain the text I am looking for.
+```
+
+Imagine a school attendance book containing 1,000 student names.
+
+You want to find:
+
+```text
+Ravi
+```
+
+Instead of reading every line manually, Linux can search for it:
+
+```bash
+grep "Ravi" students.txt
+```
+
+---
+
+# Basic Syntax
+
+```bash
+grep [OPTIONS] PATTERN FILE
+```
+
+Example:
+
+```bash
+grep "ERROR" application.log
+```
+
+This displays lines containing:
+
+```text
+ERROR
+```
+
+---
+
+# Create a Practice File
+
+Create a file:
+
+```bash
+cat > application.log
+```
+
+Enter:
+
+```text
+2026-07-08 10:00:01 INFO Application started
+2026-07-08 10:00:05 INFO Database connected
+2026-07-08 10:05:10 WARN Memory usage reached 75 percent
+2026-07-08 10:10:20 ERROR Payment failed TXN1001
+2026-07-08 10:11:15 INFO User login successful USER101
+2026-07-08 10:12:30 ERROR Database timeout TXN1002
+2026-07-08 10:13:40 WARN CPU usage reached 80 percent
+2026-07-08 10:14:50 ERROR Connection refused TXN1003
+2026-07-08 10:15:55 INFO Payment successful TXN1004
+2026-07-08 10:16:10 error temporary network problem TXN1005
+```
+
+Press:
+
+```text
+Ctrl + D
+```
+
+Now practice:
+
+```bash
+cat application.log
+```
+
+---
+
+# 2. Basic `grep` Search
+
+Search for `ERROR`:
+
+```bash
+grep "ERROR" application.log
+```
+
+Output:
+
+```text
+2026-07-08 10:10:20 ERROR Payment failed TXN1001
+2026-07-08 10:12:30 ERROR Database timeout TXN1002
+2026-07-08 10:14:50 ERROR Connection refused TXN1003
+```
+
+Important:
+
+By default, `grep` is case-sensitive.
+
+So:
+
+```text
+ERROR
+```
+
+and:
+
+```text
+error
+```
+
+are treated differently.
+
+---
+
+# 3. `grep -i` – Ignore Case
+
+Use:
+
+```bash
+grep -i "error" application.log
+```
+
+This can match:
+
+```text
+ERROR
+Error
+error
+eRRoR
+```
+
+Example output:
+
+```text
+2026-07-08 10:10:20 ERROR Payment failed TXN1001
+2026-07-08 10:12:30 ERROR Database timeout TXN1002
+2026-07-08 10:14:50 ERROR Connection refused TXN1003
+2026-07-08 10:16:10 error temporary network problem TXN1005
+```
+
+For log analysis, `-i` is useful when log capitalization is inconsistent.
+
+---
+
+# 4. `grep -v` – Invert Match
+
+`-v` means:
+
+```text
+Show lines that do NOT match the pattern.
+```
+
+Example:
+
+```bash
+grep -v "INFO" application.log
+```
+
+This displays lines that do not contain `INFO`.
+
+You can combine it with `-i`:
+
+```bash
+grep -iv "info" application.log
+```
+
+---
+
+# 5. `grep -n` – Show Line Numbers
+
+```bash
+grep -n "ERROR" application.log
+```
+
+Example:
+
+```text
+4:2026-07-08 10:10:20 ERROR Payment failed TXN1001
+6:2026-07-08 10:12:30 ERROR Database timeout TXN1002
+8:2026-07-08 10:14:50 ERROR Connection refused TXN1003
+```
+
+This is useful when you want to locate a match inside a file.
+
+---
+
+# 6. `grep -c` – Count Matching Lines
+
+```bash
+grep -c "ERROR" application.log
+```
+
+Example:
+
+```text
+3
+```
+
+Important:
+
+This counts matching lines.
+
+It does not necessarily count unique incidents or transactions.
+
+For example, one transaction failure could generate five `ERROR` lines.
+
+So:
+
+```text
+5 matching ERROR lines
+```
+
+does not automatically mean:
+
+```text
+5 failed transactions
+```
+
+This distinction is important in production support.
+
+---
+
+# 7. `grep -l` – Show Matching File Names
+
+Suppose:
+
+```text
+app.log
+payment.log
+database.log
+```
+
+Run:
+
+```bash
+grep -l "ERROR" *.log
+```
+
+Possible output:
+
+```text
+payment.log
+database.log
+```
+
+It shows file names containing at least one match.
+
+---
+
+# 8. `grep -L` – Show Files Without Matches
+
+```bash
+grep -L "ERROR" *.log
+```
+
+This shows files that do not contain the pattern.
+
+---
+
+# 9. `grep -w` – Match Whole Words
+
+Suppose:
+
+```text
+error
+errorCode
+networkerror
+error_count
+```
+
+Run:
+
+```bash
+grep -w "error" file.txt
+```
+
+This searches for `error` as a word.
+
+This can help avoid unwanted substring matches.
+
+Important: word boundaries are based on `grep`'s definition of word characters. Underscore is normally considered a word character.
+
+---
+
+# 10. `grep -x` – Match Complete Lines
+
+Suppose:
+
+```text
+ERROR
+ERROR Database failed
+INFO ERROR
+```
+
+Run:
+
+```bash
+grep -x "ERROR" file.txt
+```
+
+Only the exact complete line:
+
+```text
+ERROR
+```
+
+matches.
+
+---
+
+# 11. `grep -o` – Show Only Matching Text
+
+Suppose:
+
+```text
+Transaction TXN1001 failed
+Transaction TXN1002 failed
+Transaction TXN1003 failed
+```
+
+Use:
+
+```bash
+grep -o 'TXN[0-9]*' transactions.log
+```
+
+Output:
+
+```text
+TXN1001
+TXN1002
+TXN1003
+```
+
+This is useful for extracting matching parts from log lines.
+
+---
+
+# 12. `grep -q` – Quiet Mode
+
+```bash
+grep -q "ERROR" application.log
+```
+
+This normally prints nothing.
+
+It is useful when only the command's exit status matters.
+
+Check:
+
+```bash
+echo $?
+```
+
+Common meaning:
+
+```text
+0 → Match found
+
+1 → No match found
+
+2 → Error occurred
+```
+
+Example:
+
+```bash
+grep -q "ERROR" application.log
+
+if [ $? -eq 0 ]; then
+    echo "Error pattern found"
+fi
+```
+
+In shell scripts, a cleaner style is often:
+
+```bash
+if grep -q "ERROR" application.log; then
+    echo "Error pattern found"
+fi
+```
+
+---
+
+# 13. `grep -r` – Recursive Search
+
+Suppose:
+
+```text
+logs/
+├── app.log
+├── payment.log
+└── archive/
+    └── old.log
+```
+
+Run:
+
+```bash
+grep -r "ERROR" logs/
+```
+
+It searches through files under the directory tree.
+
+---
+
+# 14. `grep -R` – Recursive Search Following Symbolic Links
+
+```bash
+grep -R "ERROR" logs/
+```
+
+A simple distinction on GNU systems:
+
+```text
+-r → Recursive search
+
+-R → Recursive search and follow symbolic links encountered during traversal
+```
+
+Following links can expand the search unexpectedly, so use `-R` only when you understand the directory structure.
+
+---
+
+# 15. `grep -H` – Show File Names
+
+```bash
+grep -H "ERROR" application.log
+```
+
+Example:
+
+```text
+application.log:ERROR Payment failed
+```
+
+This is useful when searching multiple files.
+
+---
+
+# 16. `grep -h` – Hide File Names
+
+```bash
+grep -h "ERROR" *.log
+```
+
+This hides filename prefixes from output.
+
+---
+
+# 17. `grep -m` – Stop After N Matching Lines
+
+```bash
+grep -m 3 "ERROR" application.log
+```
+
+This stops after three matching lines for each input file.
+
+Useful when a file has thousands of matches and you only need a small sample.
+
+---
+
+# 18. `grep -A` – Show Lines After a Match
+
+`A` means:
+
+```text
+After
+```
+
+Example:
+
+```bash
+grep -A 3 "ERROR" application.log
+```
+
+This shows:
+
+```text
+Matching line
++
+3 lines after it
+```
+
+Useful when the lines after an error contain:
+
+* Stack trace details
+* Retry information
+* Downstream service response
+* Exception details
+
+---
+
+# 19. `grep -B` – Show Lines Before a Match
+
+`B` means:
+
+```text
+Before
+```
+
+Example:
+
+```bash
+grep -B 3 "ERROR" application.log
+```
+
+This shows:
+
+```text
+3 lines before
++
+Matching line
+```
+
+Useful for checking what happened before the failure.
+
+---
+
+# 20. `grep -C` – Show Context Around a Match
+
+`C` means:
+
+```text
+Context
+```
+
+Example:
+
+```bash
+grep -C 3 "ERROR" application.log
+```
+
+This shows:
+
+```text
+3 lines before
+Matching line
+3 lines after
+```
+
+This is one of the most useful options in production log analysis.
+
+Example:
+
+```bash
+grep -C 10 "TXN1001" payment.log
+```
+
+This helps you understand the events around a transaction.
+
+---
+
+# 21. Search Multiple Files
+
+```bash
+grep "ERROR" app.log payment.log database.log
+```
+
+Output may look like:
+
+```text
+app.log:ERROR Application failure
+payment.log:ERROR Payment timeout
+database.log:ERROR Connection failed
+```
+
+---
+
+# 22. Search Using Wildcards
+
+Search all `.log` files:
+
+```bash
+grep "ERROR" *.log
+```
+
+Search all `.txt` files:
+
+```bash
+grep "Linux" *.txt
+```
+
+Remember:
+
+The shell usually expands `*.log` before `grep` receives the file names.
+
+---
+
+# 23. Search Multiple Patterns with `-e`
+
+```bash
+grep -e "ERROR" -e "WARN" application.log
+```
+
+This matches lines containing either pattern.
+
+You can also write:
+
+```bash
+grep -E "ERROR|WARN" application.log
+```
+
+---
+
+# 24. Read Patterns from a File with `-f`
+
+Create:
+
+```bash
+cat > patterns.txt
+```
+
+Add:
+
+```text
+ERROR
+WARN
+CRITICAL
+FATAL
+```
+
+Press:
+
+```text
+Ctrl + D
+```
+
+Search:
+
+```bash
+grep -f patterns.txt application.log
+```
+
+This is useful when you have many search patterns.
+
+---
+
+# 25. Exclude Files
+
+GNU `grep` supports:
+
+```bash
+grep -r "ERROR" logs/ --exclude="*.gz"
+```
+
+This searches recursively but excludes `.gz` files.
+
+Another example:
+
+```bash
+grep -r "ERROR" . --exclude="debug.log"
+```
+
+---
+
+# 26. Include Only Specific Files
+
+```bash
+grep -r "ERROR" . --include="*.log"
+```
+
+This searches only `.log` files.
+
+Example:
+
+```bash
+grep -ri "connection refused" /app/logs --include="*.log"
+```
+
+---
+
+# 27. Exclude Directories
+
+```bash
+grep -r "ERROR" . --exclude-dir="archive"
+```
+
+This skips the `archive` directory.
+
+Another example:
+
+```bash
+grep -r "ERROR" . --exclude-dir=".git"
+```
+
+This is useful when searching a project repository.
+
+---
+
+# Important `grep` Options Summary
+
+| Option | Purpose                                   |
+| ------ | ----------------------------------------- |
+| `-i`   | Ignore case                               |
+| `-v`   | Show non-matching lines                   |
+| `-n`   | Show line numbers                         |
+| `-c`   | Count matching lines                      |
+| `-l`   | Show matching filenames                   |
+| `-L`   | Show filenames without matches            |
+| `-w`   | Match whole words                         |
+| `-x`   | Match complete lines                      |
+| `-o`   | Show only matched text                    |
+| `-q`   | Quiet mode                                |
+| `-r`   | Recursive search                          |
+| `-R`   | Recursive search following symbolic links |
+| `-H`   | Show filename                             |
+| `-h`   | Hide filename                             |
+| `-m N` | Stop after N matches                      |
+| `-A N` | N lines after match                       |
+| `-B N` | N lines before match                      |
+| `-C N` | N lines around match                      |
+| `-e`   | Specify multiple patterns                 |
+| `-f`   | Read patterns from file                   |
+| `-E`   | Extended Regular Expressions              |
+| `-F`   | Fixed-string matching                     |
+
+---
+
+# 28. What is `egrep`?
+
+Historically:
+
+```bash
+egrep
+```
+
+means extended grep.
+
+Modern equivalent:
+
+```bash
+grep -E
+```
+
+For new documentation and scripts, prefer:
+
+```bash
+grep -E
+```
+
+instead of:
+
+```bash
+egrep
+```
+
+The older command name may still work on many systems, but it is considered obsolete or deprecated in modern GNU environments.
+
+---
+
+# Why Use `grep -E`?
+
+Extended Regular Expressions make patterns such as these easier to write:
+
+```text
+|
++
+?
+()
+{}
+```
+
+Example:
+
+```bash
+grep -E "ERROR|WARN" application.log
+```
+
+Meaning:
+
+```text
+Find ERROR OR WARN
+```
+
+---
+
+# Basic `grep -E` Examples
+
+## Search ERROR or WARN
+
+```bash
+grep -E "ERROR|WARN" application.log
+```
+
+---
+
+## Search Multiple Error Levels
+
+```bash
+grep -E "ERROR|WARN|CRITICAL|FATAL" application.log
+```
+
+---
+
+## Case-Insensitive Multiple Pattern Search
+
+```bash
+grep -Ei "error|warn|critical|fatal" application.log
+```
+
+---
+
+# Extended Regular Expressions
+
+## `|` – OR
+
+```bash
+grep -E "ERROR|WARN" application.log
+```
+
+Meaning:
+
+```text
+ERROR OR WARN
+```
+
+---
+
+## `+` – One or More
+
+Suppose:
+
+```text
+ab
+abb
+abbb
+ac
+```
+
+Pattern:
+
+```bash
+grep -E "ab+" file.txt
+```
+
+Matches:
+
+```text
+ab
+abb
+abbb
+```
+
+because `b+` means one or more `b` characters.
+
+---
+
+## `?` – Zero or One
+
+Suppose:
+
+```text
+color
+colour
+```
+
+Use:
+
+```bash
+grep -E "colou?r" file.txt
+```
+
+This matches both:
+
+```text
+color
+colour
+```
+
+because `u?` means zero or one `u`.
+
+---
+
+## Parentheses `()` – Grouping
+
+```bash
+grep -E "(ERROR|WARN):" application.log
+```
+
+This can match:
+
+```text
+ERROR:
+WARN:
+```
+
+---
+
+## `{n}` – Exact Repetition
+
+Suppose:
+
+```text
+123
+1234
+12345
+```
+
+Use:
+
+```bash
+grep -E '^[0-9]{4}$' file.txt
+```
+
+This matches a line containing exactly four digits.
+
+---
+
+## `{n,m}` – Repetition Range
+
+```bash
+grep -E '^[0-9]{3,5}$' file.txt
+```
+
+This matches lines containing between three and five digits.
+
+---
+
+# 29. What is `fgrep`?
+
+Historically:
+
+```bash
+fgrep
+```
+
+means fixed-string grep.
+
+Modern equivalent:
+
+```bash
+grep -F
+```
+
+For new documentation and scripts, prefer:
+
+```bash
+grep -F
+```
+
+---
+
+# What Does Fixed String Mean?
+
+Suppose you want to search for this exact text:
+
+```text
+user.name
+```
+
+With normal regular-expression matching, the dot:
+
+```text
+.
+```
+
+has special meaning.
+
+With:
+
+```bash
+grep -F "user.name" config.txt
+```
+
+the dot is treated as a normal dot character.
+
+---
+
+# `grep` vs `grep -E` vs `grep -F`
+
+| Command   | Pattern Type                 | Best Use                         |
+| --------- | ---------------------------- | -------------------------------- |
+| `grep`    | Basic Regular Expressions    | Normal searches and basic regex  |
+| `grep -E` | Extended Regular Expressions | OR conditions and advanced regex |
+| `grep -F` | Fixed strings                | Exact literal text               |
+
+Legacy names:
+
+```text
+egrep → grep -E
+
+fgrep → grep -F
+```
+
+---
+
+# Basic Regular Expressions with `grep`
+
+Regular expressions are patterns used to search text.
+
+---
+
+# `^` – Beginning of Line
+
+Suppose:
+
+```text
+ERROR Database failed
+INFO ERROR count is 5
+WARN Service slow
+```
+
+Run:
+
+```bash
+grep "^ERROR" file.txt
+```
+
+Only lines starting with `ERROR` match.
+
+---
+
+# `$` – End of Line
+
+```bash
+grep "failed$" file.txt
+```
+
+This matches lines ending with:
+
+```text
+failed
+```
+
+---
+
+# `.` – Any Single Character
+
+Pattern:
+
+```bash
+grep "c.t" file.txt
+```
+
+Can match:
+
+```text
+cat
+cot
+cut
+c9t
+```
+
+because `.` matches one character.
+
+---
+
+# `*` – Zero or More of Previous Item
+
+Pattern:
+
+```bash
+grep "ab*" file.txt
+```
+
+This can match:
+
+```text
+a
+ab
+abb
+abbb
+```
+
+Be careful:
+
+`*` applies to the previous regex item.
+
+It does not mean "anything" by itself.
+
+---
+
+# Character Classes `[]`
+
+```bash
+grep "[0-9]" file.txt
+```
+
+Matches lines containing a digit.
+
+```bash
+grep "[A-Z]" file.txt
+```
+
+Matches lines containing an uppercase character according to the active locale.
+
+---
+
+# Negated Character Class `[^ ]`
+
+Example:
+
+```bash
+grep "[^0-9]" file.txt
+```
+
+Matches lines containing at least one non-digit character.
+
+This does not mean the complete line contains only non-digits.
+
+For complete-line validation:
+
+```bash
+grep -E '^[^0-9]+$' file.txt
+```
+
+---
+
+# POSIX Character Classes
+
+Useful portable classes include:
+
+```text
+[[:digit:]]  → Digits
+
+[[:alpha:]]  → Alphabetic characters
+
+[[:alnum:]]  → Letters and digits
+
+[[:space:]]  → Whitespace characters
+
+[[:lower:]]  → Lowercase characters
+
+[[:upper:]]  → Uppercase characters
+```
+
+Example:
+
+```bash
+grep -E '^[[:digit:]]+$' file.txt
+```
+
+This matches lines containing only digits.
+
+---
+
+# Important Difference: Basic vs Extended Regex
+
+With Basic Regular Expressions:
+
+```bash
+grep 'ERROR\|WARN' application.log
+```
+
+may work on GNU grep as an extension.
+
+With Extended Regular Expressions, the clearer portable form is:
+
+```bash
+grep -E 'ERROR|WARN' application.log
+```
+
+For PSA work, prefer the second form when using OR logic.
+
+---
+
+# GREP with Other Linux Commands
+
+## `grep` with `tail`
+
+Check errors in recent log lines:
+
+```bash
+tail -n 500 application.log | grep -i "error"
+```
+
+---
+
+## `grep` with `head`
+
+Find matches and display only the first few:
+
+```bash
+grep -i "error" application.log | head -n 10
+```
+
+---
+
+## `grep` with `wc`
+
+Count matching lines:
+
+```bash
+grep -i "error" application.log | wc -l
+```
+
+A shorter equivalent is often:
+
+```bash
+grep -ic "error" application.log
+```
+
+---
+
+## `grep` with `ps`
+
+Search for a process:
+
+```bash
+ps -ef | grep java
+```
+
+Problem:
+
+The `grep java` process may also appear.
+
+A common workaround is:
+
+```bash
+ps -ef | grep '[j]ava'
+```
+
+Better, when available:
+
+```bash
+pgrep -af java
+```
+
+Do not use process counts blindly as proof of application health.
+
+---
+
+## `grep` with `journalctl`
+
+Example:
+
+```bash
+journalctl -u nginx | grep -i "error"
+```
+
+For recent service logs:
+
+```bash
+journalctl -u nginx --since "1 hour ago" | grep -i "error"
+```
+
+Replace the service name with the actual systemd unit you are investigating.
+
+---
+
+## `grep` with `find`
+
+Example:
+
+```bash
+find /app/logs -type f -name "*.log" -exec grep -H "ERROR" {} +
+```
+
+This finds `.log` files and searches them.
+
+For simple recursive searches, this may be easier:
+
+```bash
+grep -r "ERROR" /app/logs --include="*.log"
+```
+
+---
+
+# PSA Real-Time Scenario 1: Payment Failure
+
+## Incident
+
+A customer says:
+
+```text
+My payment failed at 10:30 AM.
+Transaction ID: TXN98765
+```
+
+Do not start with:
+
+```bash
+grep "ERROR" payment.log
+```
+
+That may return thousands of unrelated errors.
+
+Start with the transaction ID:
+
+```bash
+grep "TXN98765" payment.log
+```
+
+Then inspect context:
+
+```bash
+grep -C 10 "TXN98765" payment.log
+```
+
+Possible output:
+
+```text
+INFO Request received TXN98765
+INFO Calling bank API TXN98765
+ERROR Bank API timeout TXN98765
+WARN Retry attempt 1 TXN98765
+ERROR Retry failed TXN98765
+```
+
+Now the investigation has useful context.
+
+---
+
+# PSA Real-Time Scenario 2: Application Startup Failure
+
+Check service status:
+
+```bash
+systemctl status application-service
+```
+
+Check recent service logs:
+
+```bash
+journalctl -u application-service -n 200
+```
+
+Search common severe patterns:
+
+```bash
+journalctl -u application-service -n 500 | grep -Ei "error|exception|fatal|failed"
+```
+
+Possible findings:
+
+```text
+Database authentication failed
+Port already in use
+Configuration file missing
+Permission denied
+Connection refused
+```
+
+Do not immediately restart a failing service repeatedly. First understand the failure and follow the incident procedure.
+
+---
+
+# PSA Real-Time Scenario 3: Search Across Multiple Logs
+
+Suppose:
+
+```text
+/app/logs/
+├── payment.log
+├── database.log
+├── api.log
+└── archive/
+```
+
+Search current `.log` files recursively:
+
+```bash
+grep -ri "TXN1001" /app/logs --include="*.log"
+```
+
+Exclude archives:
+
+```bash
+grep -ri "TXN1001" /app/logs \
+  --include="*.log" \
+  --exclude-dir="archive"
+```
+
+---
+
+# PSA Real-Time Scenario 4: Count Error Types
+
+Suppose you want to see error messages.
+
+Basic search:
+
+```bash
+grep -i "error" application.log
+```
+
+Count matching lines:
+
+```bash
+grep -ic "error" application.log
+```
+
+Extract specific error codes:
+
+```bash
+grep -oE 'ERR[0-9]+' application.log
+```
+
+Count unique codes:
+
+```bash
+grep -oE 'ERR[0-9]+' application.log | sort | uniq -c
+```
+
+Example output:
+
+```text
+10 ERR1001
+4 ERR2002
+25 ERR5001
+```
+
+This gives more useful information than one total error count.
+
+---
+
+# PSA Real-Time Scenario 5: Search by Time Window
+
+Suppose logs use this format:
+
+```text
+2026-07-08 14:30:10 ERROR Payment failed
+```
+
+Search one hour:
+
+```bash
+grep "^2026-07-08 14:" application.log
+```
+
+Then errors only:
+
+```bash
+grep "^2026-07-08 14:" application.log | grep -i "error"
+```
+
+For multiple hours:
+
+```bash
+grep -E "^2026-07-08 (14|15):" application.log
+```
+
+This works only if the log timestamp format matches the pattern.
+
+Always inspect the log format first:
+
+```bash
+head application.log
+```
+
+---
+
+# 🧪 Complete Ubuntu Practice Lab
+
+## Step 1: Create Practice Directory
+
+```bash
+cd ~
+mkdir grep-lab
+cd grep-lab
+```
+
+---
+
+## Step 2: Create Sample Log
+
+```bash
+cat > payment.log
+```
+
+Enter:
+
+```text
+2026-07-08 10:00:01 INFO Application started
+2026-07-08 10:01:10 INFO User login USER101
+2026-07-08 10:02:20 WARN Slow response TXN1001
+2026-07-08 10:03:30 ERROR Payment timeout TXN1001
+2026-07-08 10:04:40 INFO Payment successful TXN1002
+2026-07-08 10:05:50 ERROR Database failure TXN1003
+2026-07-08 10:06:10 CRITICAL Database unavailable
+2026-07-08 10:07:20 INFO Retry started TXN1003
+2026-07-08 10:08:30 ERROR Retry failed TXN1003
+2026-07-08 10:09:40 WARN CPU usage high
+2026-07-08 10:10:50 INFO Application healthy
+```
+
+Press:
+
+```text
+Ctrl + D
+```
+
+---
+
+## Step 3: Basic Search
+
+```bash
+grep "ERROR" payment.log
+```
+
+---
+
+## Step 4: Ignore Case
+
+```bash
+grep -i "error" payment.log
+```
+
+---
+
+## Step 5: Show Line Numbers
+
+```bash
+grep -n "ERROR" payment.log
+```
+
+---
+
+## Step 6: Count Matching Lines
+
+```bash
+grep -c "ERROR" payment.log
+```
+
+---
+
+## Step 7: Search Multiple Levels
+
+```bash
+grep -E "ERROR|WARN|CRITICAL" payment.log
+```
+
+---
+
+## Step 8: Search Transaction
+
+```bash
+grep "TXN1003" payment.log
+```
+
+---
+
+## Step 9: Show Context
+
+```bash
+grep -C 2 "TXN1003" payment.log
+```
+
+---
+
+## Step 10: Invert Match
+
+```bash
+grep -v "INFO" payment.log
+```
+
+---
+
+## Step 11: Extract Transaction IDs
+
+```bash
+grep -oE 'TXN[0-9]+' payment.log
+```
+
+---
+
+## Step 12: Count Unique Transaction IDs
+
+```bash
+grep -oE 'TXN[0-9]+' payment.log | sort | uniq -c
+```
+
+---
+
+## Step 13: Fixed String Search
+
+```bash
+grep -F "Database unavailable" payment.log
+```
+
+---
+
+# GREP Decision Guide
+
+Use:
+
+```text
+grep
+```
+
+when you need a normal text or basic regex search.
+
+Example:
+
+```bash
+grep "ERROR" app.log
+```
+
+Use:
+
+```text
+grep -E
+```
+
+when you need extended regex features.
+
+Example:
+
+```bash
+grep -E "ERROR|WARN|FATAL" app.log
+```
+
+Use:
+
+```text
+grep -F
+```
+
+when you need literal fixed-text searching.
+
+Example:
+
+```bash
+grep -F "user.name=value" config.txt
+```
+
+---
+
+# Common Mistakes
+
+## Mistake 1: Using `cat` Before `grep`
+
+Avoid unnecessary:
+
+```bash
+cat application.log | grep "ERROR"
+```
+
+Prefer:
+
+```bash
+grep "ERROR" application.log
+```
+
+The first form is not always wrong, but the second is simpler and avoids an unnecessary process.
+
+---
+
+## Mistake 2: Searching All Historical Errors
+
+Weak investigation:
+
+```bash
+grep "ERROR" application.log
+```
+
+Better:
+
+```bash
+grep "TXN98765" application.log
+```
+
+or narrow by:
+
+```text
+Timestamp
+Transaction ID
+Request ID
+Correlation ID
+Error code
+User ID
+```
+
+---
+
+## Mistake 3: Treating Matching Lines as Failed Transactions
+
+```bash
+grep -c "ERROR" payment.log
+```
+
+Output:
+
+```text
+100
+```
+
+This means:
+
+```text
+100 matching lines
+```
+
+It does not prove:
+
+```text
+100 failed payments
+```
+
+You may need to extract and count unique transaction IDs.
+
+---
+
+## Mistake 4: Forgetting Case Sensitivity
+
+This:
+
+```bash
+grep "error" app.log
+```
+
+does not match uppercase `ERROR`.
+
+Use:
+
+```bash
+grep -i "error" app.log
+```
+
+when case should not matter.
+
+---
+
+## Mistake 5: Using Regex When Literal Search Is Better
+
+Suppose the text is:
+
+```text
+api.payment[1]
+```
+
+This contains regex metacharacters.
+
+Use:
+
+```bash
+grep -F "api.payment[1]" application.log
+```
+
+when you need an exact literal search.
+
+---
+
+# 🎯 Interview Questions and Answers
+
+## Q1. What is `grep`?
+
+`grep` searches input text for lines matching a pattern.
+
+---
+
+## Q2. Is `grep` case-sensitive?
+
+Yes, by default.
+
+For case-insensitive matching:
+
+```bash
+grep -i "error" application.log
+```
+
+---
+
+## Q3. What is the difference between `grep`, `egrep`, and `fgrep`?
+
+Modern preferred forms are:
+
+```text
+grep
+→ Basic Regular Expressions
+
+grep -E
+→ Extended Regular Expressions
+
+grep -F
+→ Fixed-string matching
+```
+
+`egrep` and `fgrep` are legacy names for `grep -E` and `grep -F`.
+
+---
+
+## Q4. How do you search ERROR or WARN?
+
+```bash
+grep -E "ERROR|WARN" application.log
+```
+
+---
+
+## Q5. How do you count matching lines?
+
+```bash
+grep -c "ERROR" application.log
+```
+
+or:
+
+```bash
+grep "ERROR" application.log | wc -l
+```
+
+---
+
+## Q6. How do you show line numbers?
+
+```bash
+grep -n "ERROR" application.log
+```
+
+---
+
+## Q7. How do you show lines around an error?
+
+```bash
+grep -C 5 "ERROR" application.log
+```
+
+---
+
+## Q8. What is the difference between `-A`, `-B`, and `-C`?
+
+```text
+-A → Lines after match
+
+-B → Lines before match
+
+-C → Lines before and after match
+```
+
+---
+
+## Q9. How do you search recursively?
+
+```bash
+grep -r "ERROR" /app/logs
+```
+
+---
+
+## Q10. How do you search only `.log` files?
+
+```bash
+grep -r "ERROR" /app/logs --include="*.log"
+```
+
+---
+
+## Q11. How do you exclude a directory?
+
+```bash
+grep -r "ERROR" /app/logs --exclude-dir="archive"
+```
+
+---
+
+## Q12. How do you search for an exact literal string?
+
+```bash
+grep -F "exact.text[1]" file.txt
+```
+
+---
+
+## Q13. How do you search for multiple patterns?
+
+Using `-e`:
+
+```bash
+grep -e "ERROR" -e "WARN" app.log
+```
+
+or using Extended Regular Expressions:
+
+```bash
+grep -E "ERROR|WARN" app.log
+```
+
+---
+
+## Q14. How do you extract only transaction IDs?
+
+Example:
+
+```bash
+grep -oE 'TXN[0-9]+' payment.log
+```
+
+---
+
+## Q15. A user reports a failed transaction. What would you grep first?
+
+A strong answer:
+
+```text
+I would first collect the exact timestamp and a unique identifier such as transaction ID, request ID, or correlation ID.
+
+Then I would search the relevant application logs using that identifier and inspect surrounding context.
+
+I would not start by searching every ERROR in the entire log because that may include unrelated incidents.
+```
+
+Example:
+
+```bash
+grep -C 10 "TXN98765" payment.log
+```
+
+---
+
+# 📌 Quick Revision
+
+```text
+grep "ERROR" file
+→ Search matching lines
+
+grep -i
+→ Ignore case
+
+grep -v
+→ Show non-matching lines
+
+grep -n
+→ Show line numbers
+
+grep -c
+→ Count matching lines
+
+grep -w
+→ Whole-word match
+
+grep -x
+→ Complete-line match
+
+grep -o
+→ Show only matched text
+
+grep -r
+→ Recursive search
+
+grep -A 5
+→ Five lines after match
+
+grep -B 5
+→ Five lines before match
+
+grep -C 5
+→ Five lines before and after match
+
+grep -E
+→ Extended Regular Expressions
+
+grep -F
+→ Fixed-string search
+
+egrep
+→ Legacy name for grep -E
+
+fgrep
+→ Legacy name for grep -F
+```
+
+# Final Practice Challenge
+
+Create three log files:
+
+```text
+app.log
+payment.log
+database.log
+```
+
+Add different entries containing:
+
+```text
+INFO
+WARN
+ERROR
+CRITICAL
+FATAL
+TXN IDs
+USER IDs
+Database errors
+Network errors
+```
+
+Then practice these tasks:
+
+1. Find all `ERROR` lines.
+2. Search without case sensitivity.
+3. Find `ERROR`, `WARN`, or `CRITICAL`.
+4. Count matching error lines.
+5. Show line numbers.
+6. Show five lines before and after a transaction.
+7. Search recursively.
+8. Search only `.log` files.
+9. Exclude an archive directory.
+10. Extract transaction IDs.
+11. Count unique transaction IDs.
+12. Search a literal string containing `.` or `[ ]`.
+13. Find files containing errors.
+14. Find files without errors.
+15. Explain when to use `grep`, `grep -E`, and `grep -F`.
+
+For Production Support Analyst work, the key skill is not memorizing every `grep` option. The real skill is choosing the right search key:
+
+```text
+Weak Search
+ERROR
+
+Better Search
+2026-07-08 14:30
+
+Stronger Search
+TXN98765
+
+Strongest Investigation
+Timestamp + Transaction ID + Correlation ID + Context
+```
+
+A Production Support Analyst who searches only for `ERROR` will often waste time. A strong analyst narrows the incident first, then searches the logs with precision.
