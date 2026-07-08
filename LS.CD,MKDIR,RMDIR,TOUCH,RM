@@ -1,0 +1,1459 @@
+# 🐧 Linux Basic File and Directory Commands
+
+This chapter explains six important Linux commands:
+
+1. `ls` – List files and directories
+2. `cd` – Change directory
+3. `mkdir` – Create directories
+4. `rmdir` – Remove empty directories
+5. `touch` – Create empty files or update timestamps
+6. `rm` – Remove files and directories
+
+These commands are the foundation of Linux navigation and file management.
+
+---
+
+# 1. `ls` Command
+
+## What is `ls`?
+
+`ls` means **list**.
+
+It is used to display files and directories.
+
+Think about opening your school bag and checking what is inside:
+
+```text
+School Bag
+├── Maths Book
+├── English Book
+├── Notebook
+└── Pencil Box
+```
+
+In Linux, a directory is like a school bag.
+
+The `ls` command shows what is inside the directory.
+
+---
+
+## Basic Syntax
+
+```bash
+ls [OPTIONS] [PATH]
+```
+
+---
+
+## Basic Example
+
+```bash
+ls
+```
+
+Example output:
+
+```text
+Documents
+Downloads
+Pictures
+app.log
+error.log
+```
+
+This shows the visible files and directories in the current location.
+
+---
+
+## Important `ls` Options
+
+### `ls -l` – Long Listing Format
+
+```bash
+ls -l
+```
+
+Example:
+
+```text
+-rw-r--r-- 1 swaroop support 2048 Jul 8 10:30 app.log
+```
+
+The output contains:
+
+```text
+-rw-r--r--  → File type and permissions
+1           → Number of hard links
+swaroop     → Owner
+support     → Group
+2048        → File size in bytes
+Jul 8 10:30 → Last modification time
+app.log     → File name
+```
+
+This is an important command for Production Support work because it helps check file permissions, ownership, size, and modification time.
+
+---
+
+### `ls -a` – Show Hidden Files
+
+```bash
+ls -a
+```
+
+Example:
+
+```text
+.
+..
+.bashrc
+.profile
+app.log
+```
+
+In Linux, files beginning with `.` are hidden files.
+
+Examples:
+
+```text
+.bashrc
+.profile
+.git
+.ssh
+```
+
+---
+
+### `ls -A` – Show Hidden Files Except `.` and `..`
+
+```bash
+ls -A
+```
+
+This shows hidden files but does not display:
+
+```text
+.
+..
+```
+
+---
+
+### `ls -h` – Human-Readable File Sizes
+
+Usually used with `-l`:
+
+```bash
+ls -lh
+```
+
+Example:
+
+```text
+-rw-r--r-- 1 user group 2.5K Jul 8 app.log
+-rw-r--r-- 1 user group 15M Jul 8 server.log
+```
+
+Instead of showing only bytes, it shows sizes such as:
+
+```text
+K → Kilobytes
+M → Megabytes
+G → Gigabytes
+```
+
+---
+
+### `ls -t` – Sort by Modification Time
+
+```bash
+ls -lt
+```
+
+Recently modified files appear first.
+
+This is useful when you want to find the latest log file.
+
+---
+
+### `ls -r` – Reverse Sort Order
+
+```bash
+ls -lr
+```
+
+The `-r` option reverses the sorting order.
+
+A common command is:
+
+```bash
+ls -ltr
+```
+
+This means:
+
+```text
+-l → Long listing
+-t → Sort by modification time
+-r → Reverse the order
+```
+
+Older files appear first and newer files appear near the bottom.
+
+This is very common in support work.
+
+Example:
+
+```bash
+cd /app/logs
+ls -ltr
+```
+
+---
+
+### `ls -R` – Recursive Listing
+
+```bash
+ls -R
+```
+
+This displays files inside the current directory and its subdirectories.
+
+Example structure:
+
+```text
+project:
+config
+logs
+
+project/config:
+app.conf
+
+project/logs:
+app.log
+error.log
+```
+
+Be careful when using it on very large directory trees because the output can be huge.
+
+---
+
+### `ls -d` – Display Directory Entry Itself
+
+Example:
+
+```bash
+ls -ld /var/log
+```
+
+This shows information about `/var/log` itself instead of listing its contents.
+
+---
+
+### `ls -i` – Show Inode Number
+
+```bash
+ls -li
+```
+
+Example:
+
+```text
+123456 -rw-r--r-- 1 user group 100 Jul 8 app.log
+```
+
+The first number is the inode number.
+
+This is useful when learning hard links because hard-linked filenames share the same inode.
+
+---
+
+### `ls -S` – Sort by File Size
+
+```bash
+ls -lhS
+```
+
+Largest files appear first.
+
+Useful when investigating large files in a directory.
+
+---
+
+## Useful `ls` Commands for PSA Work
+
+```bash
+ls
+ls -l
+ls -la
+ls -lh
+ls -ltr
+ls -lhS
+ls -ld directory_name
+ls -li
+```
+
+---
+
+## PSA Scenario – Find Recently Updated Log
+
+Application logs are stored in:
+
+```text
+/app/logs
+```
+
+Commands:
+
+```bash
+cd /app/logs
+ls -ltr
+```
+
+Then inspect the relevant file:
+
+```bash
+tail -100 application.log
+```
+
+---
+
+# 2. `cd` Command
+
+## What is `cd`?
+
+`cd` means **change directory**.
+
+It is used to move from one directory to another.
+
+Think of a school building:
+
+```text
+School
+├── Classroom
+├── Library
+├── Computer Lab
+└── Playground
+```
+
+Walking from the classroom to the library is similar to changing directories.
+
+---
+
+## Basic Syntax
+
+```bash
+cd [DIRECTORY]
+```
+
+---
+
+## Go to a Directory
+
+```bash
+cd Documents
+```
+
+---
+
+## Use an Absolute Path
+
+```bash
+cd /var/log
+```
+
+An absolute path starts from `/`.
+
+---
+
+## Use a Relative Path
+
+Suppose you are in:
+
+```text
+/home/student
+```
+
+and `Documents` exists inside it.
+
+Use:
+
+```bash
+cd Documents
+```
+
+---
+
+## `cd ..` – Move One Level Up
+
+```bash
+cd ..
+```
+
+Example:
+
+Before:
+
+```text
+/home/student/Documents
+```
+
+After:
+
+```text
+/home/student
+```
+
+---
+
+## `cd ../..` – Move Two Levels Up
+
+```bash
+cd ../..
+```
+
+Example:
+
+Before:
+
+```text
+/home/student/project/logs
+```
+
+After:
+
+```text
+/home/student
+```
+
+---
+
+## `cd ~` – Go to Home Directory
+
+```bash
+cd ~
+```
+
+You can also usually use:
+
+```bash
+cd
+```
+
+Both take you to the current user's home directory.
+
+---
+
+## `cd -` – Go to Previous Directory
+
+Suppose you move from:
+
+```text
+/home/student
+```
+
+to:
+
+```text
+/var/log
+```
+
+Now run:
+
+```bash
+cd -
+```
+
+You return to the previous directory.
+
+This is useful when switching between two locations.
+
+---
+
+## `cd .` – Stay in Current Directory
+
+```bash
+cd .
+```
+
+`.` means the current directory.
+
+The command does not move you anywhere.
+
+---
+
+## Important Note About `cd`
+
+`cd` is normally a shell built-in command, not a regular external program.
+
+You can check using:
+
+```bash
+type cd
+```
+
+Example output:
+
+```text
+cd is a shell builtin
+```
+
+Because of this, `cd` does not use normal short options like many external Linux commands.
+
+For help in Bash:
+
+```bash
+help cd
+```
+
+---
+
+## Useful `cd` Commands
+
+```bash
+cd /var/log
+cd ..
+cd ../..
+cd ~
+cd
+cd -
+```
+
+---
+
+## PSA Scenario – Navigate to Application Logs
+
+```bash
+cd /app/logs
+pwd
+ls -ltr
+```
+
+`pwd` confirms your current location before you inspect or modify anything.
+
+---
+
+# 3. `mkdir` Command
+
+## What is `mkdir`?
+
+`mkdir` means **make directory**.
+
+It is used to create directories.
+
+Think of creating a new drawer to store books.
+
+In Linux, you create a directory to organize files.
+
+---
+
+## Basic Syntax
+
+```bash
+mkdir [OPTIONS] DIRECTORY_NAME
+```
+
+---
+
+## Create One Directory
+
+```bash
+mkdir logs
+```
+
+Check:
+
+```bash
+ls
+```
+
+---
+
+## Create Multiple Directories
+
+```bash
+mkdir logs config backup
+```
+
+This creates three directories.
+
+---
+
+## `mkdir -p` – Create Parent Directories
+
+Suppose you want:
+
+```text
+project/logs/archive
+```
+
+If `project` and `logs` do not exist, this command may fail:
+
+```bash
+mkdir project/logs/archive
+```
+
+Use:
+
+```bash
+mkdir -p project/logs/archive
+```
+
+Now Linux creates the missing parent directories.
+
+Result:
+
+```text
+project/
+└── logs/
+    └── archive/
+```
+
+---
+
+## `mkdir -v` – Verbose Output
+
+```bash
+mkdir -v logs
+```
+
+Example output:
+
+```text
+mkdir: created directory 'logs'
+```
+
+---
+
+## `mkdir -m` – Create with Permissions
+
+Example:
+
+```bash
+mkdir -m 750 secure_logs
+```
+
+This creates the directory with the requested permission mode, subject to system behavior and applicable security controls.
+
+---
+
+## Combine Options
+
+```bash
+mkdir -pv project/logs/archive
+```
+
+This:
+
+* Creates missing parent directories
+* Displays what is being created
+
+---
+
+## Useful `mkdir` Commands
+
+```bash
+mkdir logs
+mkdir logs config backup
+mkdir -p app/logs/archive
+mkdir -v logs
+mkdir -m 750 secure_logs
+```
+
+---
+
+## PSA Example
+
+Create a practice support directory structure:
+
+```bash
+mkdir -p psa-lab/{logs,config,backup}
+```
+
+Result:
+
+```text
+psa-lab/
+├── backup/
+├── config/
+└── logs/
+```
+
+Brace expansion is performed by compatible shells such as Bash before `mkdir` runs.
+
+---
+
+# 4. `rmdir` Command
+
+## What is `rmdir`?
+
+`rmdir` means **remove directory**.
+
+It removes **empty directories only**.
+
+---
+
+## Basic Syntax
+
+```bash
+rmdir [OPTIONS] DIRECTORY_NAME
+```
+
+---
+
+## Remove an Empty Directory
+
+```bash
+mkdir test
+rmdir test
+```
+
+This works because `test` is empty.
+
+---
+
+## What Happens if the Directory Contains Files?
+
+Suppose:
+
+```text
+logs/
+└── app.log
+```
+
+Run:
+
+```bash
+rmdir logs
+```
+
+You will get an error similar to:
+
+```text
+rmdir: failed to remove 'logs': Directory not empty
+```
+
+This safety behavior is important.
+
+---
+
+## Remove Multiple Empty Directories
+
+```bash
+rmdir dir1 dir2 dir3
+```
+
+All specified directories must be empty to be removed successfully.
+
+---
+
+## `rmdir -p` – Remove Directory and Empty Parents
+
+Create:
+
+```bash
+mkdir -p project/logs/archive
+```
+
+Then:
+
+```bash
+rmdir -p project/logs/archive
+```
+
+If each directory becomes empty, it removes:
+
+```text
+archive
+logs
+project
+```
+
+---
+
+## `rmdir -v` – Verbose Mode
+
+On systems where GNU `rmdir` is used:
+
+```bash
+rmdir -v test
+```
+
+It displays information about the directory being removed.
+
+---
+
+## Important Difference
+
+```text
+rmdir directory
+```
+
+removes only an empty directory.
+
+```text
+rm -r directory
+```
+
+removes a directory and its contents recursively.
+
+Do not treat them as interchangeable.
+
+---
+
+# 5. `touch` Command
+
+## What is `touch`?
+
+The `touch` command is commonly used to create an empty file.
+
+Its main purpose, however, is to update file timestamps.
+
+---
+
+## Basic Syntax
+
+```bash
+touch [OPTIONS] FILE_NAME
+```
+
+---
+
+## Create One Empty File
+
+```bash
+touch app.log
+```
+
+Check:
+
+```bash
+ls -l app.log
+```
+
+---
+
+## Create Multiple Files
+
+```bash
+touch app.log error.log access.log
+```
+
+---
+
+## Important Behavior
+
+If the file does not exist:
+
+```bash
+touch app.log
+```
+
+it creates an empty file.
+
+If the file already exists:
+
+```bash
+touch app.log
+```
+
+it normally updates its access and modification timestamps without deleting the file's content.
+
+This is a common interview question.
+
+---
+
+## `touch -a` – Update Access Time
+
+```bash
+touch -a app.log
+```
+
+This changes the access time.
+
+---
+
+## `touch -m` – Update Modification Time
+
+```bash
+touch -m app.log
+```
+
+This changes the modification time.
+
+---
+
+## `touch -c` – Do Not Create Missing File
+
+```bash
+touch -c missing.log
+```
+
+If `missing.log` does not exist, `touch` does not create it.
+
+---
+
+## `touch -t` – Set a Specific Timestamp
+
+General format:
+
+```text
+[[CC]YY]MMDDhhmm[.ss]
+```
+
+Example:
+
+```bash
+touch -t 202607081530 app.log
+```
+
+This sets the timestamp to:
+
+```text
+Year   → 2026
+Month  → 07
+Day    → 08
+Hour   → 15
+Minute → 30
+```
+
+---
+
+## `touch -r` – Copy Timestamps from Another File
+
+```bash
+touch -r source.log target.log
+```
+
+This makes the relevant timestamps of `target.log` match those of `source.log`.
+
+---
+
+## Useful `touch` Commands
+
+```bash
+touch file.txt
+touch file1 file2 file3
+touch -a app.log
+touch -m app.log
+touch -c missing.log
+touch -r source.log target.log
+```
+
+---
+
+# 6. `rm` Command
+
+## What is `rm`?
+
+`rm` means **remove**.
+
+It is used to delete files and, with recursive options, directories.
+
+⚠️ Be careful with this command.
+
+Files removed using `rm` normally do not go to a desktop Trash or Recycle Bin.
+
+---
+
+## Basic Syntax
+
+```bash
+rm [OPTIONS] FILE_NAME
+```
+
+---
+
+## Remove One File
+
+```bash
+rm file.txt
+```
+
+---
+
+## Remove Multiple Files
+
+```bash
+rm file1.txt file2.txt file3.txt
+```
+
+---
+
+## `rm -i` – Interactive Confirmation
+
+```bash
+rm -i app.log
+```
+
+Example prompt:
+
+```text
+rm: remove regular file 'app.log'?
+```
+
+Enter:
+
+```text
+y
+```
+
+to confirm.
+
+---
+
+## `rm -f` – Force Removal
+
+```bash
+rm -f app.log
+```
+
+This suppresses prompts for nonexistent files and ignores certain complaints.
+
+Be careful: `-f` reduces safety checks and confirmation opportunities.
+
+---
+
+## `rm -r` – Recursive Removal
+
+```bash
+rm -r testdir
+```
+
+This removes:
+
+* The directory
+* Files inside it
+* Subdirectories inside it
+
+Example:
+
+```text
+testdir/
+├── app.log
+├── error.log
+└── archive/
+    └── old.log
+```
+
+Running:
+
+```bash
+rm -r testdir
+```
+
+removes the complete tree.
+
+---
+
+## `rm -rf` – Recursive and Force
+
+```bash
+rm -rf testdir
+```
+
+Meaning:
+
+```text
+-r → Recursive
+-f → Force
+```
+
+This is dangerous because it can delete a directory tree without normal confirmation.
+
+Never copy a destructive command from a ticket, chat message, or document and run it blindly on a production server.
+
+Before recursive deletion, verify:
+
+```bash
+pwd
+ls -la target_directory
+```
+
+If appropriate, inspect the target with:
+
+```bash
+find target_directory -maxdepth 2 -print
+```
+
+Only after confirming the exact target should any deletion be considered.
+
+---
+
+## `rm -v` – Verbose Output
+
+```bash
+rm -v app.log
+```
+
+Example:
+
+```text
+removed 'app.log'
+```
+
+---
+
+## `rm -d` – Remove Empty Directory
+
+On GNU systems:
+
+```bash
+rm -d emptydir
+```
+
+For simple empty-directory removal, `rmdir` is clearer.
+
+---
+
+# Important Command Comparison
+
+| Command | Purpose                                 |
+| ------- | --------------------------------------- |
+| `ls`    | List files and directories              |
+| `cd`    | Change current directory                |
+| `mkdir` | Create directories                      |
+| `rmdir` | Remove empty directories                |
+| `touch` | Create empty files or update timestamps |
+| `rm`    | Remove files or directory trees         |
+
+---
+
+# 🧪 Complete Ubuntu Practice Lab
+
+## Step 1: Go to Your Home Directory
+
+```bash
+cd ~
+```
+
+---
+
+## Step 2: Create a Lab Directory
+
+```bash
+mkdir linux-command-lab
+```
+
+---
+
+## Step 3: Enter the Lab
+
+```bash
+cd linux-command-lab
+```
+
+Confirm:
+
+```bash
+pwd
+```
+
+---
+
+## Step 4: Create Directories
+
+```bash
+mkdir logs config backup
+```
+
+Check:
+
+```bash
+ls
+```
+
+---
+
+## Step 5: Create Nested Directories
+
+```bash
+mkdir -p logs/archive/2026
+```
+
+Check:
+
+```bash
+ls -R
+```
+
+---
+
+## Step 6: Create Files
+
+```bash
+touch logs/application.log
+touch logs/error.log
+touch config/app.conf
+```
+
+---
+
+## Step 7: Check Details
+
+```bash
+ls -lh logs
+```
+
+---
+
+## Step 8: Check Inodes
+
+```bash
+ls -li logs
+```
+
+---
+
+## Step 9: Move Between Directories
+
+```bash
+cd logs
+pwd
+cd ..
+pwd
+cd -
+pwd
+```
+
+Observe how `cd -` returns to the previous directory.
+
+---
+
+## Step 10: Remove an Empty Directory
+
+```bash
+mkdir empty-test
+rmdir empty-test
+```
+
+---
+
+## Step 11: Practice Safe File Removal
+
+```bash
+touch delete-me.txt
+rm -i delete-me.txt
+```
+
+Read the confirmation prompt before answering.
+
+---
+
+# 🧑‍💻 Production Support Scenarios
+
+## Scenario 1: Find the Latest Log Files
+
+```bash
+cd /app/logs
+ls -ltr
+```
+
+---
+
+## Scenario 2: Find Large Files in the Current Directory
+
+```bash
+ls -lhS
+```
+
+Remember: this sorts entries in the current directory by size. For full disk investigation, you will also need commands such as `du`, `df`, and `find`.
+
+---
+
+## Scenario 3: Check a Directory Without Listing Its Contents
+
+```bash
+ls -ld /app/logs
+```
+
+This helps inspect directory permissions and ownership.
+
+---
+
+## Scenario 4: Switch Between Two Working Directories
+
+```bash
+cd /app/logs
+cd /app/config
+cd -
+```
+
+---
+
+## Scenario 5: Prepare a Practice Application Structure
+
+```bash
+mkdir -p payment-app/{logs,config,backup}
+touch payment-app/logs/application.log
+touch payment-app/logs/error.log
+touch payment-app/config/application.conf
+```
+
+---
+
+# 🎯 Interview Questions and Answers
+
+## Q1. What is the difference between `ls` and `ls -l`?
+
+`ls` shows file and directory names.
+
+`ls -l` shows detailed information such as permissions, owner, group, size, modification time, and name.
+
+---
+
+## Q2. What does `ls -ltr` do?
+
+It displays a long listing sorted by modification time in reverse order, so newer files are usually near the bottom.
+
+---
+
+## Q3. How do you see hidden files?
+
+```bash
+ls -a
+```
+
+---
+
+## Q4. How do you go to the previous directory?
+
+```bash
+cd -
+```
+
+---
+
+## Q5. What is the difference between `cd` and `cd ..`?
+
+`cd` with no argument normally goes to the current user's home directory.
+
+`cd ..` moves to the parent directory.
+
+---
+
+## Q6. How do you create multiple directories?
+
+```bash
+mkdir dir1 dir2 dir3
+```
+
+---
+
+## Q7. What is the purpose of `mkdir -p`?
+
+It creates missing parent directories as needed.
+
+Example:
+
+```bash
+mkdir -p app/logs/archive
+```
+
+---
+
+## Q8. What is the difference between `rmdir` and `rm -r`?
+
+`rmdir` removes empty directories.
+
+`rm -r` recursively removes directories and their contents.
+
+---
+
+## Q9. What happens if `touch` is used on an existing file?
+
+The file content remains unchanged, but timestamps are normally updated.
+
+---
+
+## Q10. What is the difference between `rm -r` and `rm -f`?
+
+`rm -r` recursively removes directory trees.
+
+`rm -f` forces removal behavior and suppresses certain prompts and errors.
+
+They can be combined as `rm -rf`, which is especially risky.
+
+---
+
+# 📌 Quick Revision
+
+```text
+ls
+→ Show files and directories
+
+ls -l
+→ Detailed list
+
+ls -a
+→ Include hidden files
+
+ls -lh
+→ Human-readable sizes
+
+ls -ltr
+→ Time-sorted long list, reversed
+
+ls -lhS
+→ Sort current directory entries by size
+
+cd directory
+→ Enter directory
+
+cd ..
+→ Move one level up
+
+cd ~
+→ Go home
+
+cd -
+→ Go to previous directory
+
+mkdir name
+→ Create directory
+
+mkdir -p path
+→ Create missing parent directories
+
+rmdir name
+→ Remove empty directory
+
+touch file
+→ Create empty file or update timestamps
+
+rm file
+→ Remove file
+
+rm -i file
+→ Ask before removal
+
+rm -r directory
+→ Remove directory recursively
+
+rm -rf directory
+→ Force recursive removal; use extreme care
+```
+
+# Final Advice
+
+Do not only memorize commands.
+
+For every command:
+
+```text
+Understand
+    ↓
+Type it
+    ↓
+Check the output
+    ↓
+Make a mistake safely in a lab
+    ↓
+Understand the error
+    ↓
+Fix it
+    ↓
+Connect it to a production scenario
+```
+
+That is how Linux becomes useful for Production Support work rather than just interview memorization.
