@@ -1,0 +1,1370 @@
+# 🐧 Linux Basics – Beginner Friendly Guide
+
+Welcome to the Linux Basics section.
+
+This guide explains Linux in a very simple way. Even if you are completely new to computers and servers, you can understand these concepts step by step.
+
+---
+
+# 📚 Topics Covered
+
+1. What is Linux?
+2. Why do we use Linux?
+3. Linux Architecture
+4. Linux File System
+5. Absolute Path and Relative Path
+
+---
+
+# 1. What is Linux?
+
+## Simple Definition
+
+Linux is an **Operating System**.
+
+An Operating System is software that helps the user communicate with computer hardware.
+
+For example:
+
+```text
+User
+  ↓
+Operating System
+  ↓
+Hardware
+```
+
+Think about a restaurant.
+
+You are the customer. You tell the waiter what food you want. The waiter communicates your request to the kitchen.
+
+```text
+Customer → Waiter → Kitchen
+```
+
+In a computer:
+
+```text
+User → Linux → Hardware
+```
+
+Linux acts like the waiter between the user and the computer hardware.
+
+---
+
+## What is an Operating System?
+
+A computer has hardware such as:
+
+* CPU
+* RAM
+* Hard Disk
+* Keyboard
+* Mouse
+* Network Card
+
+The Operating System manages all these resources.
+
+For example, when you open an application, the Operating System gives CPU time and memory to that application.
+
+Some common Operating Systems are:
+
+* Linux
+* Windows
+* macOS
+* Android
+
+---
+
+## Who Created Linux?
+
+Linux was created by Linus Torvalds in 1991.
+
+He started Linux as a personal project. Later, many developers around the world contributed to it.
+
+Today, Linux is widely used for:
+
+* Servers
+* Cloud platforms
+* Web applications
+* Databases
+* Mobile devices
+* Networking devices
+* Supercomputers
+
+---
+
+## Linux Kernel vs Linux Operating System
+
+This is an important interview concept.
+
+Technically, Linux is a **kernel**.
+
+The kernel is the core part of an Operating System.
+
+A complete Linux system contains:
+
+```text
+Linux Kernel
++
+System Tools
++
+Libraries
++
+Shell
++
+Applications
+```
+
+Together, these make a usable Linux Operating System.
+
+---
+
+## What is a Linux Distribution?
+
+Linux is available in different versions called **distributions**, or **distros**.
+
+Examples include:
+
+* Ubuntu
+* Red Hat Enterprise Linux
+* CentOS Stream
+* Debian
+* Fedora
+* Rocky Linux
+* AlmaLinux
+
+Think about ice cream.
+
+The main product is ice cream, but it can come in different flavors.
+
+```text
+Ice Cream
+├── Vanilla
+├── Chocolate
+└── Strawberry
+```
+
+Similarly:
+
+```text
+Linux
+├── Ubuntu
+├── Debian
+├── Fedora
+├── Rocky Linux
+└── Other distributions
+```
+
+Different Linux distributions use the Linux kernel but may have different tools, package managers, and default configurations.
+
+---
+
+## Check Your Linux Operating System
+
+Use:
+
+```bash
+cat /etc/os-release
+```
+
+Example output:
+
+```text
+NAME="Ubuntu"
+VERSION="24.04 LTS"
+ID=ubuntu
+```
+
+This command helps you identify the Linux distribution and version.
+
+Another useful command is:
+
+```bash
+uname -a
+```
+
+This displays information about the Linux kernel and system.
+
+---
+
+# 2. Why Do We Use Linux?
+
+Linux is widely used for servers and production environments.
+
+Let us understand the main reasons.
+
+---
+
+## 2.1 Linux is Stable
+
+A production server should run continuously for long periods.
+
+Linux systems are designed to be stable and reliable.
+
+You can check how long a server has been running using:
+
+```bash
+uptime
+```
+
+Example:
+
+```text
+15:20:10 up 120 days, 4:30, 3 users, load average: 0.10, 0.20, 0.15
+```
+
+This means the server has been running for 120 days.
+
+---
+
+## 2.2 Linux is Secure
+
+Linux provides strong security features.
+
+Security is managed using:
+
+* Users
+* Groups
+* File permissions
+* Ownership
+* Authentication
+* Firewall rules
+* Security policies
+
+For example:
+
+```bash
+ls -l
+```
+
+Output:
+
+```text
+-rw-r----- 1 appuser support 2048 Jul 8 10:30 application.log
+```
+
+The permission section controls who can read, write, or execute the file.
+
+---
+
+## 2.3 Linux is Open Source
+
+Linux source code is available for people to study, modify, and improve under its licensing terms.
+
+This allows organizations and developers to build different Linux distributions and tools.
+
+---
+
+## 2.4 Linux Works Well on Servers
+
+Linux is commonly used for:
+
+* Web servers
+* Application servers
+* Database servers
+* Cloud servers
+* File servers
+* Monitoring servers
+
+As a Production Support Analyst, you may connect to Linux servers to:
+
+```text
+Check application status
+        ↓
+Check running processes
+        ↓
+Check logs
+        ↓
+Check CPU and memory
+        ↓
+Check disk space
+        ↓
+Check network connectivity
+        ↓
+Find the problem
+        ↓
+Resolve or escalate
+```
+
+---
+
+## 2.5 Linux Supports Automation
+
+Linux commands can be combined and automated.
+
+For example, an administrator can automate:
+
+* Log cleanup
+* File backup
+* Health checks
+* Batch jobs
+* Report generation
+* Service checks
+
+This reduces repetitive manual work.
+
+---
+
+## 2.6 Linux Works Well with Cloud Platforms
+
+Linux is commonly used for workloads running on cloud infrastructure.
+
+Many applications deployed on virtual machines, containers, and cloud environments run on Linux.
+
+---
+
+# 3. Linux Architecture
+
+Linux architecture explains how Linux works internally.
+
+A simple Linux architecture looks like this:
+
+```text
++----------------------------------+
+|              USER                |
++----------------------------------+
+                 ↓
++----------------------------------+
+|       APPLICATIONS / TOOLS       |
+|  vi, grep, ps, top, curl, etc.   |
++----------------------------------+
+                 ↓
++----------------------------------+
+|              SHELL               |
+|       Bash, Zsh, etc.            |
++----------------------------------+
+                 ↓
++----------------------------------+
+|              KERNEL              |
+| Process | Memory | Files | I/O   |
++----------------------------------+
+                 ↓
++----------------------------------+
+|             HARDWARE             |
+| CPU | RAM | Disk | Network Card  |
++----------------------------------+
+```
+
+Let us understand each layer.
+
+---
+
+## 3.1 Hardware
+
+Hardware is the physical part of the computer.
+
+Examples:
+
+* CPU
+* RAM
+* Hard Disk or SSD
+* Network Interface Card
+* Keyboard
+* Mouse
+
+Linux manages these hardware resources through the kernel and device drivers.
+
+---
+
+## 3.2 Kernel
+
+The kernel is the heart of Linux.
+
+Think about a school principal.
+
+The principal manages different activities in the school.
+
+Similarly, the kernel manages important computer resources.
+
+Main responsibilities of the kernel include:
+
+### Process Management
+
+The kernel manages running programs.
+
+Useful command:
+
+```bash
+ps -ef
+```
+
+Another command:
+
+```bash
+top
+```
+
+---
+
+### Memory Management
+
+The kernel manages RAM usage.
+
+Useful command:
+
+```bash
+free -m
+```
+
+or:
+
+```bash
+free -h
+```
+
+---
+
+### Device Management
+
+The kernel communicates with hardware devices using device drivers.
+
+Examples:
+
+* Disk
+* Network card
+* USB device
+* Keyboard
+
+---
+
+### File System Management
+
+The kernel helps manage:
+
+* Files
+* Directories
+* Storage
+* Permissions
+
+Useful command:
+
+```bash
+df -h
+```
+
+---
+
+## 3.3 Shell
+
+The shell accepts commands from the user and asks the Operating System to perform the requested work.
+
+Example:
+
+```bash
+ls
+```
+
+The basic flow is:
+
+```text
+User types command
+        ↓
+Shell reads command
+        ↓
+Shell requests the required operation
+        ↓
+Kernel manages system resources
+        ↓
+Result is shown to user
+```
+
+Common shells include:
+
+* Bash
+* Zsh
+* Ksh
+* Fish
+
+To check your current shell:
+
+```bash
+echo $SHELL
+```
+
+Example output:
+
+```text
+/bin/bash
+```
+
+---
+
+## 3.4 System Utilities and Applications
+
+These are programs and commands used to perform different tasks.
+
+Examples:
+
+```text
+ls      → List files
+
+cp      → Copy files
+
+mv      → Move or rename files
+
+rm      → Remove files
+
+grep    → Search text
+
+ps      → Check processes
+
+top     → Monitor processes
+
+df      → Check filesystem disk usage
+
+du      → Check file or directory space usage
+
+curl    → Send requests or test endpoints
+```
+
+---
+
+# 4. Linux File System
+
+Linux organizes files and directories in a tree-like structure.
+
+At the top is:
+
+```text
+/
+```
+
+This is called the **root directory**.
+
+Important:
+
+```text
+/     = Root directory
+
+/root = Root user's home directory
+```
+
+These are different.
+
+---
+
+## Linux File System Tree
+
+```text
+/
+├── bin
+├── boot
+├── dev
+├── etc
+├── home
+│   ├── user1
+│   └── user2
+├── lib
+├── media
+├── mnt
+├── opt
+├── proc
+├── root
+├── run
+├── srv
+├── tmp
+├── usr
+└── var
+    └── log
+```
+
+---
+
+## 4.1 `/` – Root Directory
+
+The `/` directory is the starting point of the Linux file system.
+
+Everything is located under `/`.
+
+Example:
+
+```bash
+cd /
+```
+
+Then:
+
+```bash
+ls
+```
+
+---
+
+## 4.2 `/home` – User Home Directories
+
+Normal users usually have personal directories under `/home`.
+
+Example:
+
+```text
+/home/rahul
+/home/swaroop
+/home/student
+```
+
+A user normally stores personal files in their home directory.
+
+Command:
+
+```bash
+cd ~
+```
+
+The `~` symbol represents the current user's home directory.
+
+---
+
+## 4.3 `/root` – Root User Home Directory
+
+The root user's home directory is:
+
+```text
+/root
+```
+
+Remember:
+
+```text
+/      → Top of the entire filesystem
+
+/root  → Home directory of the root user
+```
+
+---
+
+## 4.4 `/etc` – Configuration Files
+
+The `/etc` directory stores system-wide configuration files.
+
+Examples:
+
+```text
+/etc/passwd
+/etc/group
+/etc/hosts
+/etc/ssh/
+```
+
+Production Support Example:
+
+If you need to check hostname mappings:
+
+```bash
+cat /etc/hosts
+```
+
+---
+
+## 4.5 `/var` – Variable Data
+
+The `/var` directory stores data that changes frequently.
+
+Examples include:
+
+* Logs
+* Cache data
+* Spool data
+* Some application data
+
+One very important directory is:
+
+```text
+/var/log
+```
+
+Example:
+
+```bash
+cd /var/log
+ls -ltr
+```
+
+---
+
+## 4.6 `/tmp` – Temporary Files
+
+The `/tmp` directory is used for temporary files.
+
+Example:
+
+```bash
+cd /tmp
+```
+
+Applications and users may create temporary files here.
+
+Do not assume that important files in `/tmp` will be kept permanently.
+
+---
+
+## 4.7 `/bin` and `/usr/bin` – Commands
+
+These locations contain executable programs and common commands.
+
+Examples include commands such as:
+
+```text
+ls
+cp
+mv
+cat
+grep
+```
+
+You can check where a command is located using:
+
+```bash
+which ls
+```
+
+Example:
+
+```text
+/usr/bin/ls
+```
+
+---
+
+## 4.8 `/boot` – Boot Files
+
+The `/boot` directory contains files needed during the system boot process.
+
+It can contain items such as:
+
+* Kernel images
+* Bootloader-related files
+* Initial RAM filesystem images
+
+Be careful when working in this directory.
+
+---
+
+## 4.9 `/dev` – Device Files
+
+Linux represents many devices as special files.
+
+Examples:
+
+```text
+/dev/sda
+/dev/null
+/dev/tty
+```
+
+These special files provide interfaces to devices or special system behavior.
+
+---
+
+## 4.10 `/proc` – Process and Kernel Information
+
+`/proc` is a virtual filesystem.
+
+It provides information about:
+
+* Running processes
+* CPU information
+* Memory information
+* Kernel settings
+
+Examples:
+
+Check CPU information:
+
+```bash
+cat /proc/cpuinfo
+```
+
+Check memory information:
+
+```bash
+cat /proc/meminfo
+```
+
+---
+
+## 4.11 `/opt` – Optional Software
+
+Third-party or additional software may be installed under `/opt`.
+
+Example:
+
+```text
+/opt/myapp
+/opt/company-application
+```
+
+The exact application layout depends on the organization.
+
+---
+
+## Important Directories for Production Support
+
+For PSA work, pay special attention to:
+
+```text
+/etc       → Configuration
+
+/var/log   → System and service logs
+
+/opt       → Optional application software
+
+/tmp       → Temporary files
+
+/home      → User home directories
+
+/proc      → Process and kernel information
+```
+
+Application-specific logs may also be stored in custom paths such as:
+
+```text
+/app/logs
+/apps/payment/logs
+/opt/myapp/logs
+```
+
+The actual path depends on the company and application.
+
+---
+
+# 5. Absolute Path and Relative Path
+
+A **path** tells Linux where a file or directory is located.
+
+There are two main types:
+
+1. Absolute Path
+2. Relative Path
+
+---
+
+## 5.1 Absolute Path
+
+An absolute path gives the complete location starting from `/`.
+
+Example:
+
+```text
+/home/student/Documents/report.txt
+```
+
+It starts from the root directory:
+
+```text
+/
+```
+
+Another example:
+
+```text
+/var/log/syslog
+```
+
+Because the path starts with `/`, it is an absolute path.
+
+---
+
+## Simple Example
+
+Imagine your school address:
+
+```text
+India
+→ Andhra Pradesh
+→ City
+→ School
+→ Class 5
+→ Desk 10
+```
+
+This is like giving the complete location.
+
+Similarly:
+
+```text
+/home/student/Documents/report.txt
+```
+
+is the complete location of the file.
+
+---
+
+## Absolute Path Example
+
+Suppose you are currently in:
+
+```text
+/tmp
+```
+
+You want to go to `/var/log`.
+
+You can run:
+
+```bash
+cd /var/log
+```
+
+It works because you provided the full path.
+
+---
+
+## 5.2 Relative Path
+
+A relative path is based on your current location.
+
+Suppose you are currently in:
+
+```text
+/home/student
+```
+
+Inside it, you have:
+
+```text
+Documents/
+Downloads/
+Pictures/
+```
+
+To enter Documents, you can use:
+
+```bash
+cd Documents
+```
+
+You do not need to type:
+
+```bash
+cd /home/student/Documents
+```
+
+because `Documents` is directly inside your current directory.
+
+---
+
+## Important Path Symbols
+
+### `.` – Current Directory
+
+The dot means:
+
+```text
+Current directory
+```
+
+Example:
+
+```bash
+ls .
+```
+
+---
+
+### `..` – Parent Directory
+
+Two dots mean:
+
+```text
+One directory level up
+```
+
+Example:
+
+If you are in:
+
+```text
+/home/student/Documents
+```
+
+Run:
+
+```bash
+cd ..
+```
+
+Now you move to:
+
+```text
+/home/student
+```
+
+---
+
+### `~` – Home Directory
+
+The tilde represents your home directory.
+
+Command:
+
+```bash
+cd ~
+```
+
+If your home directory is:
+
+```text
+/home/student
+```
+
+then `cd ~` takes you there.
+
+---
+
+## Absolute vs Relative Path Comparison
+
+| Feature                     | Absolute Path | Relative Path     |
+| --------------------------- | ------------- | ----------------- |
+| Starting point              | Root `/`      | Current directory |
+| Starts with `/`             | Yes           | Usually no        |
+| Complete location           | Yes           | No                |
+| Depends on current location | No            | Yes               |
+| Example                     | `/var/log`    | `logs/app.log`    |
+
+---
+
+# 🧪 Practice Lab
+
+## Practice 1: Check Your Current Location
+
+```bash
+pwd
+```
+
+`pwd` means:
+
+```text
+Print Working Directory
+```
+
+---
+
+## Practice 2: Go to Root Directory
+
+```bash
+cd /
+```
+
+Check your location:
+
+```bash
+pwd
+```
+
+Expected output:
+
+```text
+/
+```
+
+---
+
+## Practice 3: View Root Directories
+
+```bash
+ls
+```
+
+Try:
+
+```bash
+ls -l
+```
+
+and:
+
+```bash
+ls -lh
+```
+
+---
+
+## Practice 4: Explore `/etc`
+
+```bash
+cd /etc
+pwd
+ls | head
+```
+
+---
+
+## Practice 5: Explore Logs
+
+```bash
+cd /var/log
+pwd
+ls -ltr
+```
+
+Note: Some log files may require elevated permissions to read.
+
+---
+
+## Practice 6: Create Your Own Lab
+
+```bash
+cd ~
+mkdir linux-lab
+cd linux-lab
+mkdir logs
+mkdir config
+mkdir backup
+touch logs/application.log
+touch logs/error.log
+touch config/app.conf
+```
+
+Check:
+
+```bash
+find . -maxdepth 2 -type f -o -type d
+```
+
+You should now have a small practice structure similar to:
+
+```text
+linux-lab/
+├── backup/
+├── config/
+│   └── app.conf
+└── logs/
+    ├── application.log
+    └── error.log
+```
+
+---
+
+# 🧑‍💻 Production Support Scenario
+
+## Scenario
+
+A user reports:
+
+> The payment application is not working.
+
+A Production Support Analyst may begin with checks such as:
+
+### Step 1: Connect to the server
+
+```bash
+ssh username@server
+```
+
+### Step 2: Check server uptime and load summary
+
+```bash
+uptime
+```
+
+### Step 3: Check disk space
+
+```bash
+df -h
+```
+
+### Step 4: Check memory
+
+```bash
+free -h
+```
+
+### Step 5: Check processes
+
+```bash
+ps -ef
+```
+
+or:
+
+```bash
+top
+```
+
+### Step 6: Check service status
+
+```bash
+systemctl status application-service
+```
+
+Replace `application-service` with the real service unit name.
+
+### Step 7: Check logs
+
+Example:
+
+```bash
+cd /app/logs
+ls -ltr
+tail -100 application.log
+```
+
+For live monitoring:
+
+```bash
+tail -f application.log
+```
+
+The exact commands and paths depend on the application and the permissions given to the support team.
+
+---
+
+# 🎯 Interview Questions
+
+## Question 1: What is Linux?
+
+Linux is an open-source Unix-like operating system kernel. In everyday usage, people also use the word Linux to refer to complete operating systems built around the Linux kernel.
+
+---
+
+## Question 2: Why is Linux used for servers?
+
+Linux is widely used for servers because it is stable, flexible, secure, automation-friendly, and supported by a large ecosystem.
+
+---
+
+## Question 3: What is the kernel?
+
+The kernel is the core part of the Operating System. It manages processes, memory, devices, filesystems, and communication with hardware.
+
+---
+
+## Question 4: What is a shell?
+
+A shell is a command interpreter that accepts commands from the user and helps execute programs and interact with the Operating System.
+
+---
+
+## Question 5: What is the root directory?
+
+The root directory is `/`.
+
+It is the top-level directory of the Linux filesystem.
+
+---
+
+## Question 6: What is the difference between `/` and `/root`?
+
+```text
+/      → Top of the complete Linux filesystem
+
+/root  → Home directory of the root user
+```
+
+---
+
+## Question 7: What is an absolute path?
+
+An absolute path is the complete path starting from `/`.
+
+Example:
+
+```text
+/var/log/application.log
+```
+
+---
+
+## Question 8: What is a relative path?
+
+A relative path is based on the current working directory.
+
+Example:
+
+```text
+logs/application.log
+```
+
+---
+
+## Question 9: How do you check the current directory?
+
+```bash
+pwd
+```
+
+---
+
+## Question 10: How do you identify the Linux distribution?
+
+```bash
+cat /etc/os-release
+```
+
+---
+
+# 📝 Quick Revision
+
+```text
+Linux
+   ↓
+Operating system family built around the Linux kernel
+
+Kernel
+   ↓
+Core component that manages system resources
+
+Shell
+   ↓
+Accepts and interprets commands
+
+/
+   ↓
+Root of the filesystem
+
+/etc
+   ↓
+System-wide configuration
+
+/var/log
+   ↓
+Common system and service log location
+
+/home
+   ↓
+Normal user home directories
+
+/root
+   ↓
+Root user's home directory
+
+Absolute Path
+   ↓
+Starts from /
+
+Relative Path
+   ↓
+Depends on current directory
+```
+
+---
+
+# ✅ Final Practice Challenge
+
+Without checking the answers first, try these tasks:
+
+1. Find your current directory.
+2. Go to the root directory.
+3. List root-level directories.
+4. Go to `/var/log` using an absolute path.
+5. Return to your home directory using `~`.
+6. Create a directory called `psa-practice`.
+7. Create `logs`, `config`, and `backup` inside it.
+8. Create `application.log` inside `logs`.
+9. Display your Linux distribution information.
+10. Display kernel information.
+
+Commands you will need:
+
+```bash
+pwd
+cd
+ls
+mkdir
+touch
+cat
+uname
+```
+
+Practice these concepts directly in Ubuntu. Reading Linux without typing commands creates recognition, not troubleshooting skill.
