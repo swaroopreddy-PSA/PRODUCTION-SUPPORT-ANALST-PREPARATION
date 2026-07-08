@@ -1,0 +1,1477 @@
+# 🐧 Linux File Viewing Commands
+
+This chapter explains five important Linux commands used to view file content:
+
+1. `cat` – Display complete file content
+2. `head` – Display the beginning of a file
+3. `tail` – Display the end of a file
+4. `more` – View file content page by page
+5. `less` – View and search large files interactively
+
+These commands are very important for Production Support Analysts because application troubleshooting often starts with log files.
+
+---
+
+# 1. `cat` Command
+
+## What is `cat`?
+
+`cat` stands for **concatenate**.
+
+It is commonly used to:
+
+* Display file content
+* Combine files
+* Copy combined content into another file
+* Add line numbers to displayed output
+* Create small files using redirection
+
+Think about opening a short notebook and reading all pages at once.
+
+That is similar to:
+
+```bash
+cat file.txt
+```
+
+---
+
+## Basic Syntax
+
+```bash
+cat [OPTIONS] [FILE...]
+```
+
+---
+
+## Display File Content
+
+Suppose `student.txt` contains:
+
+```text
+Name: Ravi
+Class: 5
+School: ABC School
+```
+
+Run:
+
+```bash
+cat student.txt
+```
+
+Output:
+
+```text
+Name: Ravi
+Class: 5
+School: ABC School
+```
+
+---
+
+## Display Multiple Files
+
+Suppose:
+
+`file1.txt`
+
+```text
+Apple
+Mango
+```
+
+`file2.txt`
+
+```text
+Banana
+Orange
+```
+
+Run:
+
+```bash
+cat file1.txt file2.txt
+```
+
+Output:
+
+```text
+Apple
+Mango
+Banana
+Orange
+```
+
+`cat` reads the files in the order provided.
+
+---
+
+## `cat -n` – Show Line Numbers
+
+```bash
+cat -n application.log
+```
+
+Example:
+
+```text
+1 Application started
+2 Database connected
+3 Payment request received
+4 ERROR: Connection timeout
+```
+
+This can help when discussing a specific line in a small file.
+
+---
+
+## `cat -b` – Number Non-Empty Lines
+
+```bash
+cat -b notes.txt
+```
+
+This numbers only non-empty lines.
+
+Example file:
+
+```text
+Linux
+
+SQL
+
+Splunk
+```
+
+Output may look like:
+
+```text
+     1  Linux
+
+     2  SQL
+
+     3  Splunk
+```
+
+---
+
+## `cat -s` – Squeeze Repeated Blank Lines
+
+Suppose a file contains many empty lines.
+
+Run:
+
+```bash
+cat -s notes.txt
+```
+
+Repeated blank lines are reduced to a single blank line in the displayed output.
+
+The original file is not changed unless you explicitly redirect output somewhere.
+
+---
+
+## `cat -E` – Show End of Each Line
+
+```bash
+cat -E file.txt
+```
+
+Example:
+
+```text
+Linux$
+SQL$
+Splunk$
+```
+
+The `$` marks the end of each line.
+
+This can help when investigating formatting problems.
+
+---
+
+## `cat -T` – Show Tab Characters
+
+```bash
+cat -T file.txt
+```
+
+Tab characters are displayed as:
+
+```text
+^I
+```
+
+This is useful when checking whether a file contains tabs instead of spaces.
+
+---
+
+## `cat -A` – Show Non-Printing Characters
+
+```bash
+cat -A file.txt
+```
+
+This can reveal characters such as tabs and line endings.
+
+Useful for troubleshooting text-formatting problems.
+
+---
+
+## Combine Files into a New File
+
+```bash
+cat file1.txt file2.txt > combined.txt
+```
+
+Now:
+
+```bash
+cat combined.txt
+```
+
+may show:
+
+```text
+Apple
+Mango
+Banana
+Orange
+```
+
+Important:
+
+```text
+>   Overwrite the destination file
+
+>>  Append to the destination file
+```
+
+---
+
+## Append File Content
+
+```bash
+cat new-errors.log >> all-errors.log
+```
+
+This appends the content of `new-errors.log` to `all-errors.log`.
+
+Be careful with redirection because `>` can overwrite existing content.
+
+---
+
+## Create a Small File Using `cat`
+
+```bash
+cat > test.txt
+```
+
+Type:
+
+```text
+Linux Practice
+Production Support
+Log Analysis
+```
+
+Then press:
+
+```text
+Ctrl + D
+```
+
+`Ctrl + D` sends end-of-file input to the command.
+
+Check:
+
+```bash
+cat test.txt
+```
+
+---
+
+## Append Text Interactively
+
+```bash
+cat >> test.txt
+```
+
+Type more content and press:
+
+```text
+Ctrl + D
+```
+
+---
+
+## Important `cat` Options
+
+| Option | Purpose                            |
+| ------ | ---------------------------------- |
+| `-n`   | Number all output lines            |
+| `-b`   | Number non-empty output lines      |
+| `-s`   | Reduce repeated blank output lines |
+| `-E`   | Show line endings                  |
+| `-T`   | Show tabs                          |
+| `-A`   | Show non-printing characters       |
+
+---
+
+## PSA Scenario – Read a Small Configuration File
+
+Suppose you want to check a small configuration file:
+
+```bash
+cat /app/config/application.conf
+```
+
+For a small file, `cat` is simple and useful.
+
+For a very large log file, avoid:
+
+```bash
+cat huge-application.log
+```
+
+because it can flood your terminal with thousands or millions of lines.
+
+Use `less`, `head`, `tail`, or filtering commands instead.
+
+---
+
+# 2. `head` Command
+
+## What is `head`?
+
+`head` displays the beginning of a file.
+
+By default, it displays the first **10 lines**.
+
+Think of a 100-page book.
+
+You only want to read the first few pages.
+
+That is the idea behind `head`.
+
+---
+
+## Basic Syntax
+
+```bash
+head [OPTIONS] [FILE...]
+```
+
+---
+
+## Display First 10 Lines
+
+```bash
+head application.log
+```
+
+By default, the first 10 lines are displayed.
+
+---
+
+## Display First 5 Lines
+
+```bash
+head -n 5 application.log
+```
+
+Short form:
+
+```bash
+head -5 application.log
+```
+
+Both are commonly seen.
+
+For scripts and documentation, `-n 5` is often clearer.
+
+---
+
+## Display First 20 Lines
+
+```bash
+head -n 20 application.log
+```
+
+---
+
+## Display First N Bytes
+
+```bash
+head -c 100 file.txt
+```
+
+This displays the first 100 bytes.
+
+---
+
+## Display Content Except the Last N Lines
+
+GNU `head` supports a negative line count.
+
+Example:
+
+```bash
+head -n -5 application.log
+```
+
+This displays all lines except the last 5.
+
+Behavior and available options can vary across operating systems, so check:
+
+```bash
+head --help
+```
+
+or:
+
+```bash
+man head
+```
+
+---
+
+## View Multiple Files
+
+```bash
+head file1.txt file2.txt
+```
+
+The output includes headers identifying each file.
+
+---
+
+## Important `head` Options
+
+| Option | Purpose                                               |
+| ------ | ----------------------------------------------------- |
+| `-n N` | Show first N lines                                    |
+| `-c N` | Show first N bytes                                    |
+| `-q`   | Do not print file headers when reading multiple files |
+| `-v`   | Always print file headers                             |
+
+---
+
+## PSA Scenario – Check Beginning of a Log File
+
+Suppose you want to check application startup messages:
+
+```bash
+head -n 50 application.log
+```
+
+This may help you inspect:
+
+* Application startup time
+* Initial configuration loading
+* Database connection setup
+* Early startup errors
+
+---
+
+# 3. `tail` Command
+
+## What is `tail`?
+
+`tail` displays the end of a file.
+
+By default, it displays the last **10 lines**.
+
+This is one of the most important commands for Production Support.
+
+Why?
+
+Because new log messages are usually added near the end of a log file.
+
+---
+
+## Basic Syntax
+
+```bash
+tail [OPTIONS] [FILE...]
+```
+
+---
+
+## Display Last 10 Lines
+
+```bash
+tail application.log
+```
+
+---
+
+## Display Last 20 Lines
+
+```bash
+tail -n 20 application.log
+```
+
+Short form:
+
+```bash
+tail -20 application.log
+```
+
+---
+
+## Display Last 100 Lines
+
+```bash
+tail -n 100 application.log
+```
+
+This is common during incident investigation.
+
+---
+
+## `tail -f` – Follow a Growing File
+
+```bash
+tail -f application.log
+```
+
+This keeps the command running and displays new lines as they are added to the file.
+
+Example:
+
+```text
+INFO Application started
+INFO Database connected
+INFO User login request
+ERROR Payment service timeout
+```
+
+If a new line is written:
+
+```text
+ERROR Database connection failed
+```
+
+it appears automatically.
+
+Stop live monitoring using:
+
+```text
+Ctrl + C
+```
+
+---
+
+## `tail -F` – Follow by File Name
+
+```bash
+tail -F application.log
+```
+
+`-F` is useful when log rotation may replace or recreate the file.
+
+A simple difference:
+
+```text
+tail -f
+→ Follows the opened file
+
+tail -F
+→ Keeps trying to follow the named file even if it is replaced or temporarily unavailable
+```
+
+This can be useful for rotating application logs.
+
+---
+
+## Start from a Specific Line
+
+```bash
+tail -n +50 file.txt
+```
+
+This means:
+
+```text
+Start displaying from line 50 onward
+```
+
+Example:
+
+```bash
+tail -n +100 application.log
+```
+
+---
+
+## Display Last N Bytes
+
+```bash
+tail -c 100 file.txt
+```
+
+This displays the last 100 bytes.
+
+---
+
+## Follow Multiple Files
+
+```bash
+tail -f app.log error.log
+```
+
+`tail` identifies which file new output belongs to.
+
+---
+
+## Important `tail` Options
+
+| Option | Purpose                       |
+| ------ | ----------------------------- |
+| `-n N` | Show last N lines             |
+| `-c N` | Show last N bytes             |
+| `-f`   | Follow new appended data      |
+| `-F`   | Follow by file name and retry |
+| `-q`   | Suppress file headers         |
+| `-v`   | Always show file headers      |
+
+---
+
+## PSA Scenario – Live Log Monitoring
+
+A user reports:
+
+> Payment is failing now.
+
+You identify the application log:
+
+```bash
+cd /app/logs
+ls -ltr
+```
+
+Then:
+
+```bash
+tail -f payment.log
+```
+
+Ask for a controlled reproduction of the issue if your incident process allows it.
+
+You may see:
+
+```text
+ERROR Payment request failed
+ERROR Database timeout
+ERROR Connection refused
+```
+
+The log message gives you a direction for further investigation.
+
+Do not stop at the first `ERROR` line. Check surrounding context and timestamps.
+
+---
+
+## Useful Tail and Grep Combination
+
+```bash
+tail -n 500 application.log | grep "ERROR"
+```
+
+Case-insensitive search:
+
+```bash
+tail -n 500 application.log | grep -i "error"
+```
+
+Live filtering:
+
+```bash
+tail -f application.log | grep --line-buffered -i "error"
+```
+
+Note: `--line-buffered` is a GNU `grep` option and may not exist on every Unix-like system.
+
+---
+
+# 4. `more` Command
+
+## What is `more`?
+
+`more` displays file content one screen at a time.
+
+Suppose a file has 10,000 lines.
+
+Using:
+
+```bash
+cat large.log
+```
+
+will quickly print everything to the terminal.
+
+Instead, use:
+
+```bash
+more large.log
+```
+
+This allows you to read the file page by page.
+
+---
+
+## Basic Syntax
+
+```bash
+more [OPTIONS] FILE
+```
+
+---
+
+## Open a File
+
+```bash
+more application.log
+```
+
+---
+
+## Important Keys Inside `more`
+
+| Key     | Action                                   |
+| ------- | ---------------------------------------- |
+| `Space` | Next screen                              |
+| `Enter` | Next line                                |
+| `/word` | Search forward                           |
+| `n`     | Repeat search                            |
+| `q`     | Quit                                     |
+| `h`     | Help, on implementations that support it |
+
+Example search:
+
+```text
+/ERROR
+```
+
+Press Enter.
+
+Then use:
+
+```text
+n
+```
+
+to find the next match.
+
+---
+
+## Start from a Specific Line
+
+```bash
+more +100 application.log
+```
+
+This starts viewing near line 100.
+
+---
+
+## Start from a Search Pattern
+
+On common implementations:
+
+```bash
+more +/ERROR application.log
+```
+
+This starts near the first matching pattern.
+
+---
+
+## Important `more` Options
+
+Common GNU/Linux options include:
+
+| Option      | Purpose                                                 |
+| ----------- | ------------------------------------------------------- |
+| `-d`        | Display helpful prompts                                 |
+| `-s`        | Squeeze repeated blank lines                            |
+| `-N`        | Display line numbers on implementations that support it |
+| `+N`        | Start near line N                                       |
+| `+/pattern` | Start near a matching pattern                           |
+
+Options differ between implementations. Use:
+
+```bash
+more --help
+```
+
+or:
+
+```bash
+man more
+```
+
+for your system.
+
+---
+
+## PSA Example
+
+```bash
+more application.log
+```
+
+Then search:
+
+```text
+/ERROR
+```
+
+This can work for manual log inspection, but `less` is usually more flexible.
+
+---
+
+# 5. `less` Command
+
+## What is `less`?
+
+`less` is an interactive file viewer.
+
+It is generally better suited than `cat` for reading large text files.
+
+You can:
+
+* Move forward
+* Move backward
+* Search forward
+* Search backward
+* Jump to beginning
+* Jump to end
+* Follow growing files
+
+A popular saying is:
+
+```text
+less is more
+```
+
+The meaning is that `less` provides more navigation features than the older `more` pager.
+
+---
+
+## Basic Syntax
+
+```bash
+less [OPTIONS] FILE
+```
+
+---
+
+## Open a File
+
+```bash
+less application.log
+```
+
+---
+
+## Important Keys Inside `less`
+
+| Key        | Action                                    |
+| ---------- | ----------------------------------------- |
+| `Space`    | Next page                                 |
+| `b`        | Previous page                             |
+| `Enter`    | Next line                                 |
+| `↑`        | Move up                                   |
+| `↓`        | Move down                                 |
+| `g`        | Go to beginning                           |
+| `G`        | Go to end                                 |
+| `/word`    | Search forward                            |
+| `?word`    | Search backward                           |
+| `n`        | Next search match                         |
+| `N`        | Previous search match                     |
+| `F`        | Follow new data                           |
+| `Ctrl + C` | Stop follow mode and return to navigation |
+| `q`        | Quit                                      |
+
+---
+
+## Search for ERROR
+
+Open:
+
+```bash
+less application.log
+```
+
+Inside `less`, type:
+
+```text
+/ERROR
+```
+
+Press Enter.
+
+Then:
+
+```text
+n
+```
+
+moves to the next match.
+
+```text
+N
+```
+
+moves to the previous match.
+
+---
+
+## Search Backward
+
+Inside `less`:
+
+```text
+?ERROR
+```
+
+This searches backward.
+
+---
+
+## Open Near the End of a File
+
+```bash
+less +G application.log
+```
+
+This opens the file and moves near the end.
+
+---
+
+## Follow a Growing File
+
+Open:
+
+```bash
+less application.log
+```
+
+Then press:
+
+```text
+Shift + F
+```
+
+or simply:
+
+```text
+F
+```
+
+New lines are displayed as the file grows.
+
+Press:
+
+```text
+Ctrl + C
+```
+
+to stop follow mode and return to normal navigation.
+
+Then press:
+
+```text
+q
+```
+
+to quit.
+
+---
+
+## Show Line Numbers
+
+```bash
+less -N application.log
+```
+
+This displays line numbers.
+
+---
+
+## Do Not Wrap Long Lines
+
+```bash
+less -S application.log
+```
+
+Long lines are chopped instead of wrapped.
+
+This can be useful for wide structured logs.
+
+---
+
+## Ignore Case in Searches
+
+```bash
+less -i application.log
+```
+
+This makes searches ignore case when the search pattern itself contains no uppercase letters.
+
+---
+
+## Important `less` Options
+
+| Option | Purpose                                                   |
+| ------ | --------------------------------------------------------- |
+| `-N`   | Show line numbers                                         |
+| `-S`   | Chop long lines                                           |
+| `-i`   | Smart case-insensitive search                             |
+| `-X`   | Do not clear the screen on exit on common implementations |
+| `+G`   | Start near the end of the file                            |
+
+---
+
+# `cat` vs `head` vs `tail` vs `more` vs `less`
+
+| Command   | Main Purpose                      | Best Use                            |
+| --------- | --------------------------------- | ----------------------------------- |
+| `cat`     | Display complete content          | Small files                         |
+| `head`    | Display beginning                 | First lines and startup information |
+| `tail`    | Display end                       | Recent log entries                  |
+| `tail -f` | Follow new lines                  | Live log monitoring                 |
+| `more`    | Page-by-page viewing              | Basic sequential reading            |
+| `less`    | Interactive navigation and search | Large files and logs                |
+
+---
+
+# 🧪 Complete Ubuntu Practice Lab
+
+## Step 1: Create a Practice Directory
+
+```bash
+cd ~
+mkdir file-viewing-lab
+cd file-viewing-lab
+```
+
+---
+
+## Step 2: Create Sample Data
+
+```bash
+seq 1 100 > numbers.txt
+```
+
+Check:
+
+```bash
+wc -l numbers.txt
+```
+
+Expected:
+
+```text
+100 numbers.txt
+```
+
+---
+
+## Step 3: Practice `cat`
+
+```bash
+cat numbers.txt
+```
+
+Try:
+
+```bash
+cat -n numbers.txt
+```
+
+---
+
+## Step 4: Practice `head`
+
+```bash
+head numbers.txt
+```
+
+```bash
+head -n 5 numbers.txt
+```
+
+```bash
+head -n 20 numbers.txt
+```
+
+---
+
+## Step 5: Practice `tail`
+
+```bash
+tail numbers.txt
+```
+
+```bash
+tail -n 5 numbers.txt
+```
+
+```bash
+tail -n 20 numbers.txt
+```
+
+---
+
+## Step 6: Practice `more`
+
+```bash
+more numbers.txt
+```
+
+Try:
+
+```text
+Space
+Enter
+q
+```
+
+---
+
+## Step 7: Practice `less`
+
+```bash
+less numbers.txt
+```
+
+Inside `less`, try:
+
+```text
+g
+G
+/50
+n
+N
+q
+```
+
+---
+
+# 🧪 Live Log Practice
+
+Open Terminal 1:
+
+```bash
+cd ~/file-viewing-lab
+touch application.log
+tail -f application.log
+```
+
+Keep it running.
+
+Open Terminal 2:
+
+```bash
+cd ~/file-viewing-lab
+echo "INFO Application started" >> application.log
+echo "INFO Database connected" >> application.log
+echo "ERROR Payment timeout" >> application.log
+```
+
+Look at Terminal 1.
+
+You should see new log lines appearing immediately.
+
+This is a simple simulation of real-time log monitoring.
+
+Stop `tail -f` with:
+
+```text
+Ctrl + C
+```
+
+---
+
+# 🧑‍💻 PSA Real-Time Scenario
+
+## Incident
+
+A user reports:
+
+> I tried to make a payment at 10:30 AM, but the payment failed.
+
+A reasonable investigation flow might be:
+
+### Step 1: Go to the log directory
+
+```bash
+cd /app/logs
+```
+
+### Step 2: Find recently modified files
+
+```bash
+ls -ltr
+```
+
+### Step 3: Check recent log lines
+
+```bash
+tail -n 200 payment.log
+```
+
+### Step 4: Search for errors
+
+```bash
+tail -n 500 payment.log | grep -i "error"
+```
+
+### Step 5: Search by transaction ID if available
+
+```bash
+grep "TXN12345" payment.log
+```
+
+### Step 6: Inspect the complete surrounding context
+
+```bash
+less payment.log
+```
+
+Inside `less`:
+
+```text
+/TXN12345
+```
+
+The main lesson is this:
+
+```text
+Do not search only for the word ERROR.
+
+Better investigation keys can include:
+
+Timestamp
+Transaction ID
+Request ID
+User ID
+Order ID
+Correlation ID
+Error code
+Service name
+```
+
+In production support, a generic `grep ERROR` may return thousands of unrelated failures. Good troubleshooting narrows the search to the specific incident.
+
+---
+
+# 🎯 Interview Questions and Answers
+
+## Q1. What does `cat` do?
+
+`cat` displays and concatenates file content. It can also be used with redirection to combine or create files.
+
+---
+
+## Q2. What is the default behavior of `head`?
+
+It displays the first 10 lines of a file.
+
+---
+
+## Q3. What is the default behavior of `tail`?
+
+It displays the last 10 lines of a file.
+
+---
+
+## Q4. What is `tail -f` used for?
+
+It follows a growing file and displays new lines as they are appended.
+
+It is commonly used for live log monitoring.
+
+---
+
+## Q5. What is the difference between `tail -f` and `tail -F`?
+
+`tail -f` follows the current file.
+
+`tail -F` follows by file name and retries if the file is replaced or temporarily unavailable, which can help with log rotation.
+
+---
+
+## Q6. What is the difference between `cat` and `less`?
+
+`cat` prints the complete file to standard output.
+
+`less` provides interactive navigation and searching, making it more suitable for large files.
+
+---
+
+## Q7. What is the difference between `more` and `less`?
+
+`more` is a simpler pager mainly designed for forward reading.
+
+`less` provides richer navigation, including backward movement and stronger search controls.
+
+---
+
+## Q8. How do you check the last 100 lines of a log file?
+
+```bash
+tail -n 100 application.log
+```
+
+---
+
+## Q9. How do you monitor a log file continuously?
+
+```bash
+tail -f application.log
+```
+
+---
+
+## Q10. How do you view the first 50 lines of a file?
+
+```bash
+head -n 50 file.txt
+```
+
+---
+
+## Q11. How do you search inside `less`?
+
+Open the file:
+
+```bash
+less application.log
+```
+
+Then type:
+
+```text
+/ERROR
+```
+
+Press Enter.
+
+Use:
+
+```text
+n
+```
+
+for the next match.
+
+---
+
+## Q12. Why should you avoid `cat` for a huge log file?
+
+Because it prints the entire file to the terminal, which can create excessive output and make investigation harder.
+
+Use `less`, `head`, `tail`, or filtering commands instead.
+
+---
+
+# 📌 Quick Revision
+
+```text
+cat file
+→ Display complete file content
+
+cat -n file
+→ Display content with line numbers
+
+cat file1 file2
+→ Display files one after another
+
+cat file1 file2 > combined
+→ Combine into a destination file
+
+head file
+→ First 10 lines
+
+head -n 20 file
+→ First 20 lines
+
+tail file
+→ Last 10 lines
+
+tail -n 100 file
+→ Last 100 lines
+
+tail -f file
+→ Follow new appended lines
+
+tail -F file
+→ Follow by name and retry
+
+more file
+→ Basic page-by-page viewing
+
+less file
+→ Interactive viewing and searching
+
+less -N file
+→ View with line numbers
+
+less -S file
+→ Do not wrap long lines
+```
+
+# Final Practice Challenge
+
+Create a file with 500 lines:
+
+```bash
+seq 1 500 > server.log
+```
+
+Without looking at the examples above, try to:
+
+1. Display the complete file.
+2. Display the first 20 lines.
+3. Display the last 50 lines.
+4. Open it page by page.
+5. Open it with backward and forward navigation.
+6. Search for line `250`.
+7. Display line numbers in `less`.
+8. Practice live monitoring using another terminal.
+
+The commands you should understand after this chapter are:
+
+```text
+cat
+head
+tail
+tail -f
+tail -F
+more
+less
+```
+
+For PSA preparation, prioritize practical mastery in this order:
+
+```text
+tail
+↓
+less
+↓
+grep
+↓
+head
+↓
+cat
+↓
+more
+```
+
+`tail`, `less`, and `grep` will usually matter more in incident troubleshooting than memorizing every option of every viewing command.
