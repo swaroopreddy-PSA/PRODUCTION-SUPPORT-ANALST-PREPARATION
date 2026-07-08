@@ -1,0 +1,2183 @@
+# 🐧 VI Editor in Linux – Complete Beginner Guide
+
+## Introduction
+
+The `vi` editor is a terminal-based text editor used in Unix and Linux environments.
+
+It is used to:
+
+* Create files
+* Open files
+* Read files
+* Edit files
+* Search text
+* Replace text
+* Delete lines
+* Copy lines
+* Paste lines
+* Undo changes
+* Save files
+* Exit files
+
+For a Production Support Analyst, a terminal editor can be useful when working with:
+
+```text id="78p9aq"
+Configuration files
+Properties files
+Service configuration
+Small scripts
+Text files
+Controlled configuration changes
+Temporary diagnostic notes
+```
+
+However, editing production files directly should follow the organization's incident and change-management process.
+
+---
+
+# 1. What is the VI Editor?
+
+`vi` is a text editor that runs inside the terminal.
+
+Simple example:
+
+Suppose you have a notebook.
+
+You can:
+
+```text id="ltmhyq"
+Open notebook
+    ↓
+Read text
+    ↓
+Write text
+    ↓
+Change text
+    ↓
+Delete text
+    ↓
+Save notebook
+    ↓
+Close notebook
+```
+
+The `vi` editor performs similar tasks for text files.
+
+---
+
+# 2. Why Should a Production Support Analyst Learn VI?
+
+Production servers may not have graphical editors available.
+
+You may connect to a server using SSH:
+
+```bash id="cdtz5s"
+ssh username@server
+```
+
+Then you may need to inspect or, when authorized, edit a file such as:
+
+```text id="8wskpm"
+/app/config/application.conf
+```
+
+You can open it using:
+
+```bash id="ezbczm"
+vi /app/config/application.conf
+```
+
+Common use cases include:
+
+```text id="a9nqmy"
+Check configuration
+Change a property
+Update an endpoint
+Modify a port number
+Correct a file path
+Update a timeout value
+Review a small script
+```
+
+Do not make production changes only because you know the editor commands. Technical ability and change authorization are separate things.
+
+---
+
+# 3. Open VI Editor
+
+## Open an Existing File
+
+```bash id="jvqln8"
+vi file.txt
+```
+
+Example:
+
+```bash id="noyhlv"
+vi application.conf
+```
+
+---
+
+## Create a New File
+
+```bash id="ffz0py"
+vi newfile.txt
+```
+
+If the file does not exist, `vi` opens a new buffer. The file is created on disk when you save it successfully.
+
+---
+
+# 4. VI Editor Modes
+
+This is the most important VI concept.
+
+VI mainly works using different modes.
+
+For beginners, focus on:
+
+```text id="dt7c6g"
+1. Normal Mode
+2. Insert Mode
+3. Command-Line Mode
+```
+
+Some documentation calls Normal Mode "Command Mode."
+
+---
+
+# VI Mode Flow
+
+```text id="pz33u1"
+              Open File
+                  ↓
+            NORMAL MODE
+             ↙         ↘
+          i, a, o       :
+            ↓           ↓
+       INSERT MODE   COMMAND-LINE MODE
+            ↓           ↓
+           Esc      Enter / command result
+            ↓           ↓
+            └────→ NORMAL MODE
+```
+
+The biggest beginner mistake is typing without knowing which mode is active.
+
+Always ask yourself:
+
+```text id="5p6cfh"
+Which mode am I in?
+```
+
+---
+
+# 5. Normal Mode
+
+When you open a file:
+
+```bash id="27i27n"
+vi file.txt
+```
+
+you normally start in Normal Mode.
+
+In Normal Mode, keys perform editor actions.
+
+Examples:
+
+```text id="bldlbm"
+i   → Enter Insert Mode
+
+x   → Delete character
+
+dd  → Delete line
+
+yy  → Copy line
+
+p   → Paste
+
+u   → Undo
+
+/   → Search forward
+
+:   → Enter Command-Line Mode
+```
+
+Important:
+
+If you type:
+
+```text id="13l6e0"
+hello
+```
+
+while in Normal Mode, VI may interpret those letters as commands instead of inserting the word `hello`.
+
+---
+
+# 6. Insert Mode
+
+Insert Mode is used to type or modify text.
+
+Common ways to enter Insert Mode:
+
+```text id="31l61e"
+i
+I
+a
+A
+o
+O
+```
+
+Press:
+
+```text id="igk6t2"
+Esc
+```
+
+to return to Normal Mode.
+
+---
+
+# `i` – Insert Before Cursor
+
+Press:
+
+```text id="jcc5q6"
+i
+```
+
+Now type text.
+
+Example:
+
+```text id="f04j4b"
+Linux is an operating system.
+```
+
+Press:
+
+```text id="b3y4eo"
+Esc
+```
+
+to return to Normal Mode.
+
+---
+
+# `I` – Insert at Beginning of Line
+
+Press:
+
+```text id="s4ix45"
+I
+```
+
+The cursor moves to the first non-blank character of the current line and enters Insert Mode.
+
+---
+
+# `a` – Append After Cursor
+
+Press:
+
+```text id="uwy6z6"
+a
+```
+
+This enters Insert Mode after the current cursor position.
+
+---
+
+# `A` – Append at End of Line
+
+Press:
+
+```text id="03t4c8"
+A
+```
+
+This moves to the end of the line and enters Insert Mode.
+
+This is useful when adding text to the end of a configuration line.
+
+---
+
+# `o` – Open a New Line Below
+
+Press:
+
+```text id="ntx3bi"
+o
+```
+
+A new line is opened below the current line and Insert Mode starts.
+
+---
+
+# `O` – Open a New Line Above
+
+Press:
+
+```text id="et6wlm"
+O
+```
+
+A new line is opened above the current line and Insert Mode starts.
+
+---
+
+# Insert Commands Summary
+
+| Command | Purpose                     |
+| ------- | --------------------------- |
+| `i`     | Insert before cursor        |
+| `I`     | Insert at beginning of line |
+| `a`     | Append after cursor         |
+| `A`     | Append at end of line       |
+| `o`     | Open new line below         |
+| `O`     | Open new line above         |
+| `Esc`   | Return to Normal Mode       |
+
+---
+
+# 7. Command-Line Mode
+
+From Normal Mode, press:
+
+```text id="mbus79"
+:
+```
+
+Now you can enter commands such as:
+
+```text id="cyzbjp"
+:w
+:q
+:wq
+:q!
+:set number
+```
+
+---
+
+# 8. Save and Exit Commands
+
+These are essential.
+
+## Save File
+
+```text id="9yl2ur"
+:w
+```
+
+Meaning:
+
+```text id="u39x0f"
+Write changes to disk
+```
+
+---
+
+## Quit
+
+```text id="i04e86"
+:q
+```
+
+This exits when there are no unsaved changes.
+
+---
+
+## Save and Quit
+
+```text id="3uz0e2"
+:wq
+```
+
+Meaning:
+
+```text id="u4z53h"
+Save changes
++
+Exit editor
+```
+
+---
+
+## Save and Quit with `ZZ`
+
+In Normal Mode:
+
+```text id="ks5sdr"
+ZZ
+```
+
+This writes the file if modified and exits.
+
+This is different from typing `:ZZ`.
+
+---
+
+## Quit Without Saving
+
+```text id="pj0afm"
+:q!
+```
+
+This discards unsaved changes and exits.
+
+Use it when you made unwanted edits and intentionally want to abandon them.
+
+---
+
+## Write to Another File
+
+```text id="0alv7n"
+:w newfile.txt
+```
+
+This writes the current buffer to the specified file name.
+
+---
+
+# Save and Exit Summary
+
+| Command       | Purpose                          |
+| ------------- | -------------------------------- |
+| `:w`          | Save                             |
+| `:q`          | Quit                             |
+| `:wq`         | Save and quit                    |
+| `:x`          | Save if needed and quit          |
+| `ZZ`          | Save if modified and quit        |
+| `:q!`         | Quit and discard unsaved changes |
+| `:w filename` | Write to another file            |
+
+---
+
+# 9. Cursor Movement
+
+You can use arrow keys on many systems, but traditional VI movement keys are:
+
+```text id="emfxif"
+        k
+        ↑
+    h ←   → l
+        ↓
+        j
+```
+
+Meaning:
+
+```text id="0cgl6u"
+h → Move left
+
+j → Move down
+
+k → Move up
+
+l → Move right
+```
+
+Why learn them?
+
+They work consistently in terminal environments and keep your hands on the keyboard.
+
+---
+
+# 10. Word Movement
+
+## Move to Next Word
+
+```text id="r08iv3"
+w
+```
+
+---
+
+## Move Backward by Word
+
+```text id="h4p8vo"
+b
+```
+
+---
+
+## Move to End of Word
+
+```text id="o5jlb5"
+e
+```
+
+---
+
+# 11. Line Navigation
+
+## Beginning of Line
+
+```text id="79eunw"
+0
+```
+
+This moves to column zero.
+
+---
+
+## First Non-Blank Character
+
+```text id="v1lyws"
+^
+```
+
+---
+
+## End of Line
+
+```text id="3f0fxh"
+$
+```
+
+---
+
+# 12. File Navigation
+
+## Beginning of File
+
+```text id="b1e2bc"
+gg
+```
+
+This is common in Vim and many vi-compatible editors.
+
+Traditional `vi` users can also use:
+
+```text id="g0yccp"
+1G
+```
+
+---
+
+## End of File
+
+```text id="d3fje6"
+G
+```
+
+---
+
+## Go to a Specific Line
+
+Example:
+
+```text id="d8wx8p"
+50G
+```
+
+This moves to line 50.
+
+You can also use:
+
+```text id="3rvmpl"
+:50
+```
+
+---
+
+# Navigation Summary
+
+| Command | Purpose                                     |
+| ------- | ------------------------------------------- |
+| `h`     | Left                                        |
+| `j`     | Down                                        |
+| `k`     | Up                                          |
+| `l`     | Right                                       |
+| `w`     | Next word                                   |
+| `b`     | Previous word                               |
+| `e`     | End of word                                 |
+| `0`     | Beginning of line                           |
+| `^`     | First non-blank character                   |
+| `$`     | End of line                                 |
+| `gg`    | Beginning of file in Vim-compatible editors |
+| `G`     | End of file                                 |
+| `50G`   | Go to line 50                               |
+| `:50`   | Go to line 50                               |
+
+---
+
+# 13. Delete Commands
+
+Deleting in VI is powerful because deleted text is usually placed into a register and can often be pasted.
+
+---
+
+## Delete One Character
+
+```text id="eq8v0r"
+x
+```
+
+---
+
+## Delete Current Line
+
+```text id="jvtb0n"
+dd
+```
+
+---
+
+## Delete 5 Lines
+
+```text id="quznz8"
+5dd
+```
+
+This deletes the current line and the next four lines.
+
+---
+
+## Delete from Cursor to End of Line
+
+```text id="e6nqcx"
+D
+```
+
+or:
+
+```text id="j3r52a"
+d$
+```
+
+---
+
+## Delete a Word
+
+```text id="dzj4pd"
+dw
+```
+
+---
+
+## Delete from Cursor to Beginning of Line
+
+```text id="vkbz21"
+d0
+```
+
+---
+
+# Delete Commands Summary
+
+| Command | Purpose                     |
+| ------- | --------------------------- |
+| `x`     | Delete character            |
+| `dd`    | Delete current line         |
+| `5dd`   | Delete 5 lines              |
+| `dw`    | Delete word                 |
+| `D`     | Delete to end of line       |
+| `d$`    | Delete to end of line       |
+| `d0`    | Delete to beginning of line |
+
+---
+
+# 14. Copy and Paste
+
+In VI, copying is called:
+
+```text id="p1gt73"
+Yank
+```
+
+---
+
+## Copy Current Line
+
+```text id="rbx4up"
+yy
+```
+
+---
+
+## Copy 5 Lines
+
+```text id="21pj5g"
+5yy
+```
+
+---
+
+## Copy a Word
+
+```text id="kv5f6m"
+yw
+```
+
+---
+
+## Paste After Cursor or Below Line
+
+```text id="c7ac1b"
+p
+```
+
+For linewise copied text, `p` pastes below the current line.
+
+---
+
+## Paste Before Cursor or Above Line
+
+```text id="o81ltw"
+P
+```
+
+For linewise copied text, `P` pastes above the current line.
+
+---
+
+# Copy and Paste Summary
+
+| Command | Purpose            |
+| ------- | ------------------ |
+| `yy`    | Copy current line  |
+| `5yy`   | Copy 5 lines       |
+| `yw`    | Copy word          |
+| `p`     | Paste after/below  |
+| `P`     | Paste before/above |
+
+---
+
+# 15. Undo and Redo
+
+## Undo Last Change
+
+```text id="jsxtbq"
+u
+```
+
+---
+
+## Redo
+
+In Vim and many vi-compatible editors:
+
+```text id="tvdy72"
+Ctrl + r
+```
+
+This redoes an undone change.
+
+Traditional `vi` behavior may differ, so check the editor available on your system.
+
+---
+
+# 16. Search in VI
+
+Search is very important for configuration files and logs.
+
+Suppose the file contains:
+
+```text id="h4ogyo"
+server.port=8080
+database.host=db01
+database.port=3306
+timeout=30
+```
+
+---
+
+## Search Forward
+
+In Normal Mode:
+
+```text id="0t8bwr"
+/timeout
+```
+
+Press Enter.
+
+The cursor moves to the next match.
+
+---
+
+## Find Next Match
+
+```text id="o4swpl"
+n
+```
+
+---
+
+## Find Previous Match
+
+```text id="q2lq4j"
+N
+```
+
+---
+
+## Search Backward
+
+```text id="4lcb1d"
+?timeout
+```
+
+---
+
+# Search Summary
+
+| Command | Purpose                             |
+| ------- | ----------------------------------- |
+| `/word` | Search forward                      |
+| `?word` | Search backward                     |
+| `n`     | Repeat search in same direction     |
+| `N`     | Repeat search in opposite direction |
+
+---
+
+# 17. Search and Replace
+
+This is important but potentially dangerous.
+
+Always understand the scope before replacing text.
+
+---
+
+## Replace First Match on Current Line
+
+```text id="e91hhc"
+:s/old/new/
+```
+
+Example:
+
+```text id="1iw4kq"
+:s/8080/9090/
+```
+
+This replaces the first match on the current line.
+
+---
+
+## Replace All Matches on Current Line
+
+```text id="sjtns2"
+:s/old/new/g
+```
+
+The `g` means all matches on that line.
+
+---
+
+## Replace First Match on Every Line
+
+```text id="zfh7uk"
+:%s/old/new/
+```
+
+---
+
+## Replace All Matches in the Entire File
+
+```text id="rxr8cw"
+:%s/old/new/g
+```
+
+Example:
+
+```text id="n9b5uj"
+:%s/localhost/dbserver/g
+```
+
+---
+
+## Replace with Confirmation
+
+```text id="oh24l3"
+:%s/old/new/gc
+```
+
+The `c` asks for confirmation.
+
+This is safer for important files.
+
+Typical choices include:
+
+```text id="y54kx7"
+y → Replace this match
+
+n → Skip this match
+
+a → Replace all remaining matches
+
+q → Quit substitution
+
+l → Replace this match and stop
+```
+
+Available choices can vary slightly by implementation.
+
+---
+
+# 18. Line Numbers
+
+## Show Line Numbers
+
+```text id="pl8aqp"
+:set number
+```
+
+Short form:
+
+```text id="d4znmt"
+:set nu
+```
+
+---
+
+## Hide Line Numbers
+
+```text id="4mkwai"
+:set nonumber
+```
+
+Short form:
+
+```text id="dy6q0v"
+:set nonu
+```
+
+Line numbers are useful when an error message mentions:
+
+```text id="o9ybm2"
+Configuration error at line 125
+```
+
+You can jump directly:
+
+```text id="80z87c"
+:125
+```
+
+---
+
+# 19. Show Invisible Characters
+
+To display special characters:
+
+```text id="7sy4bc"
+:set list
+```
+
+This can help identify:
+
+* Tabs
+* Trailing spaces
+* Line endings
+
+Turn it off:
+
+```text id="k00r2h"
+:set nolist
+```
+
+---
+
+# 20. Case-Insensitive Search
+
+Use:
+
+```text id="8iowtx"
+:set ignorecase
+```
+
+Short form:
+
+```text id="z8d0gj"
+:set ic
+```
+
+Now:
+
+```text id="yx00x5"
+/error
+```
+
+can also match uppercase forms depending on editor settings.
+
+Turn it off:
+
+```text id="71ru47"
+:set noignorecase
+```
+
+---
+
+# 21. Highlight Search Results
+
+In Vim and compatible implementations:
+
+```text id="1fyp7n"
+:set hlsearch
+```
+
+This highlights search matches.
+
+Turn off current highlighting:
+
+```text id="n79hts"
+:nohlsearch
+```
+
+or commonly:
+
+```text id="b2pyoy"
+:noh
+```
+
+---
+
+# 22. Join Lines
+
+Suppose:
+
+```text id="y0wzfe"
+Linux is
+a powerful
+operating system
+```
+
+Place the cursor on the first line and press:
+
+```text id="tn33hs"
+J
+```
+
+The current line joins with the next line.
+
+You can use a count:
+
+```text id="5m7av8"
+3J
+```
+
+to join multiple lines.
+
+---
+
+# 23. Replace One Character
+
+Move the cursor to a character and press:
+
+```text id="1x2efj"
+r
+```
+
+Then type the replacement character.
+
+Example:
+
+```text id="b5ygbl"
+r9
+```
+
+replaces the character under the cursor with `9`.
+
+---
+
+# 24. Change Commands
+
+VI also has change operations.
+
+## Change Word
+
+```text id="ssb3g2"
+cw
+```
+
+This changes from the cursor through the word according to VI word-motion rules and enters Insert Mode.
+
+---
+
+## Change Entire Line
+
+```text id="hhy5lc"
+cc
+```
+
+This changes the current line and enters Insert Mode.
+
+---
+
+## Change to End of Line
+
+```text id="1g2spu"
+C
+```
+
+or:
+
+```text id="s1tzqm"
+c$
+```
+
+---
+
+# 25. Repeat Last Change
+
+Press:
+
+```text id="hmd67q"
+.
+```
+
+The dot command repeats the last change.
+
+Example idea:
+
+```text id="3n5o5k"
+Change one configuration value
+Move to another similar value
+Press .
+```
+
+This is powerful, so use it carefully.
+
+---
+
+# 26. Open a File at a Specific Line
+
+```bash id="jzmlq7"
+vi +50 application.conf
+```
+
+This opens the file near line 50.
+
+Another form:
+
+```bash id="ve3zv3"
+vi application.conf
+```
+
+Then:
+
+```text id="nd2fcx"
+:50
+```
+
+---
+
+# 27. Open a File at a Search Pattern
+
+Common Vim-compatible syntax:
+
+```bash id="2f7j68"
+vi +/ERROR application.log
+```
+
+This opens the file near the first matching pattern.
+
+Shell quoting may be useful for more complex patterns.
+
+---
+
+# 28. Read Another File into the Current Buffer
+
+Inside VI:
+
+```text id="hdffaj"
+:r another-file.txt
+```
+
+This inserts the contents of another file below the current line.
+
+Example:
+
+```text id="mzjhjw"
+:r backup.conf
+```
+
+---
+
+# 29. Run a Shell Command Without Leaving VI
+
+Inside VI:
+
+```text id="by0alh"
+:!ls -l
+```
+
+Another example:
+
+```text id="jgrbke"
+:!pwd
+```
+
+The editor temporarily runs the shell command and shows its output.
+
+---
+
+# 30. VI Command Cheat Sheet
+
+## Modes
+
+```text id="0o9y1k"
+Normal Mode
+→ Navigation and editing commands
+
+Insert Mode
+→ Type text
+
+Command-Line Mode
+→ Save, quit, settings, substitution
+```
+
+---
+
+## Insert Commands
+
+```text id="4dxlkw"
+i  → Insert before cursor
+
+I  → Insert at line beginning
+
+a  → Append after cursor
+
+A  → Append at line end
+
+o  → New line below
+
+O  → New line above
+```
+
+---
+
+## Save and Exit
+
+```text id="2a2cnq"
+:w
+→ Save
+
+:q
+→ Quit
+
+:wq
+→ Save and quit
+
+:q!
+→ Quit without saving
+
+ZZ
+→ Save if modified and quit
+```
+
+---
+
+## Delete
+
+```text id="ks6m9u"
+x
+→ Delete character
+
+dd
+→ Delete line
+
+5dd
+→ Delete 5 lines
+
+dw
+→ Delete word
+
+D
+→ Delete to end of line
+```
+
+---
+
+## Copy and Paste
+
+```text id="95zc5a"
+yy
+→ Copy line
+
+5yy
+→ Copy 5 lines
+
+p
+→ Paste after/below
+
+P
+→ Paste before/above
+```
+
+---
+
+## Search
+
+```text id="cl41ve"
+/word
+→ Search forward
+
+?word
+→ Search backward
+
+n
+→ Next match in search direction
+
+N
+→ Previous match relative to search direction
+```
+
+---
+
+## Replace
+
+```text id="0y6q3b"
+:s/old/new/
+→ Replace first match on current line
+
+:s/old/new/g
+→ Replace all matches on current line
+
+:%s/old/new/g
+→ Replace all matches in file
+
+:%s/old/new/gc
+→ Replace all with confirmation
+```
+
+---
+
+# 🧪 Complete Ubuntu Practice Lab
+
+## Step 1: Create Practice Directory
+
+```bash id="aqo7v9"
+cd ~
+mkdir vi-practice
+cd vi-practice
+```
+
+---
+
+## Step 2: Create a Configuration File
+
+```bash id="4cw4st"
+vi application.conf
+```
+
+Press:
+
+```text id="bj4d5c"
+i
+```
+
+Type:
+
+```text id="vkdjfa"
+application.name=PaymentService
+server.port=8080
+database.host=localhost
+database.port=3306
+database.name=paymentdb
+connection.timeout=30
+retry.count=3
+log.level=INFO
+```
+
+Press:
+
+```text id="62n2ab"
+Esc
+```
+
+Save and exit:
+
+```text id="b0id5c"
+:wq
+```
+
+---
+
+## Step 3: Verify the File
+
+```bash id="61qlw5"
+cat application.conf
+```
+
+---
+
+## Step 4: Open Again
+
+```bash id="6f9jdt"
+vi application.conf
+```
+
+---
+
+## Step 5: Show Line Numbers
+
+```text id="7c4npe"
+:set number
+```
+
+---
+
+## Step 6: Search for Database
+
+```text id="9n85cz"
+/database
+```
+
+Press:
+
+```text id="gr8rfk"
+n
+```
+
+to move to another match.
+
+---
+
+## Step 7: Change the Port
+
+Search:
+
+```text id="6ndk2c"
+/8080
+```
+
+You can use substitution on the current line:
+
+```text id="utijce"
+:s/8080/9090/
+```
+
+---
+
+## Step 8: Change Log Level
+
+Search:
+
+```text id="ivtk1e"
+/log.level
+```
+
+Then:
+
+```text id="hy22pm"
+:s/INFO/DEBUG/
+```
+
+---
+
+## Step 9: Add a New Configuration Line
+
+Go to the end:
+
+```text id="fsgwpc"
+G
+```
+
+Press:
+
+```text id="mdjj3d"
+o
+```
+
+Type:
+
+```text id="t0t8yw"
+healthcheck.enabled=true
+```
+
+Press:
+
+```text id="pcbfv4"
+Esc
+```
+
+---
+
+## Step 10: Save
+
+```text id="0gw9j1"
+:w
+```
+
+---
+
+## Step 11: Exit
+
+```text id="wtrp47"
+:q
+```
+
+---
+
+# 🧑‍💻 PSA Real-Time Scenario 1 – Controlled Configuration Change
+
+## Incident or Change
+
+An approved change requires:
+
+```text id="ls6v2y"
+connection.timeout=30
+```
+
+to become:
+
+```text id="66crf9"
+connection.timeout=60
+```
+
+A safe workflow may look like this:
+
+### Step 1: Confirm Environment
+
+Check:
+
+```bash id="jx0c4q"
+hostname
+```
+
+Check current user:
+
+```bash id="obobfn"
+whoami
+```
+
+Check location:
+
+```bash id="xfhm0u"
+pwd
+```
+
+Never assume you are on the correct server.
+
+---
+
+### Step 2: Inspect the File
+
+```bash id="uqzk5e"
+ls -l application.conf
+```
+
+Check current value:
+
+```bash id="z0pt9j"
+grep "^connection.timeout=" application.conf
+```
+
+---
+
+### Step 3: Create Backup if Required by Procedure
+
+```bash id="tk6s5h"
+cp -p application.conf application.conf.bak-20260708-1530
+```
+
+Verify:
+
+```bash id="ekz9wy"
+ls -l application.conf*
+```
+
+---
+
+### Step 4: Edit
+
+```bash id="80n5mp"
+vi application.conf
+```
+
+Search:
+
+```text id="ddu46i"
+/connection.timeout
+```
+
+Change carefully.
+
+---
+
+### Step 5: Save
+
+```text id="1s9h40"
+:wq
+```
+
+---
+
+### Step 6: Verify
+
+```bash id="f8tq4e"
+grep "^connection.timeout=" application.conf
+```
+
+Expected:
+
+```text id="28w77m"
+connection.timeout=60
+```
+
+---
+
+### Step 7: Compare Backup and Current File
+
+```bash id="o7ocui"
+diff application.conf.bak-20260708-1530 application.conf
+```
+
+This confirms what changed.
+
+---
+
+### Step 8: Validate Application Configuration
+
+If the application provides a configuration-validation command, use it before restart or reload.
+
+The exact command depends on the application.
+
+---
+
+### Step 9: Restart or Reload Only If Required and Approved
+
+Do not assume every configuration change requires:
+
+```bash id="4vq97p"
+systemctl restart application-service
+```
+
+Some applications support reload, dynamic configuration, or require a specific deployment process.
+
+Follow the runbook or approved change procedure.
+
+---
+
+### Step 10: Validate Health
+
+Examples:
+
+```bash id="4t7fby"
+systemctl status application-service
+```
+
+```bash id="2mp62l"
+journalctl -u application-service -n 100
+```
+
+Check the application health endpoint if one exists and you are authorized to access it.
+
+---
+
+# 🧑‍💻 PSA Real-Time Scenario 2 – Wrong Change Made
+
+Suppose you accidentally changed the wrong line but have not saved yet.
+
+Use:
+
+```text id="pkf6lv"
+u
+```
+
+to undo the last change.
+
+If you want to discard all unsaved changes and exit:
+
+```text id="zwk97m"
+:q!
+```
+
+Then reopen the file:
+
+```bash id="8tzw1e"
+vi application.conf
+```
+
+This is safer than trying random edits to repair a mistake you do not fully understand.
+
+---
+
+# 🧑‍💻 PSA Real-Time Scenario 3 – Find an Error in a Large Configuration File
+
+Open:
+
+```bash id="n2v3jd"
+vi application.conf
+```
+
+Show line numbers:
+
+```text id="shqox7"
+:set number
+```
+
+Go directly to line 125:
+
+```text id="o5uf2q"
+:125
+```
+
+Search for:
+
+```text id="kph3x3"
+/database.host
+```
+
+This is useful when an error message provides a file name and line number.
+
+---
+
+# 🧑‍💻 PSA Real-Time Scenario 4 – Replace an Endpoint Carefully
+
+Suppose an approved change requires replacing:
+
+```text id="83umc4"
+old-api.internal
+```
+
+with:
+
+```text id="5wzyzq"
+new-api.internal
+```
+
+First inspect occurrences outside the editor:
+
+```bash id="5ibipb"
+grep -nF "old-api.internal" application.conf
+```
+
+Open:
+
+```bash id="9fhbkv"
+vi application.conf
+```
+
+Use confirmation:
+
+```text id="bg7rkn"
+:%s/old-api\.internal/new-api.internal/gc
+```
+
+Why escape the dots?
+
+In regular expressions:
+
+```text id="a3m0i3"
+.
+```
+
+means any single character.
+
+Escaping:
+
+```text id="19dg1q"
+\.
+```
+
+means a literal dot.
+
+For simple substitutions, understanding regex behavior prevents accidental replacements.
+
+---
+
+# Common VI Mistakes
+
+## Mistake 1: Typing in Normal Mode
+
+You open:
+
+```bash id="hspiqn"
+vi file.txt
+```
+
+and immediately type:
+
+```text id="zlxujq"
+hello
+```
+
+VI interprets keys as commands.
+
+Correct approach:
+
+```text id="hzwu7q"
+Press i
+Type text
+Press Esc
+Save with :w
+```
+
+---
+
+## Mistake 2: Cannot Exit VI
+
+Remember:
+
+```text id="o09xwv"
+Esc
+:q
+```
+
+If there are unsaved changes and you want to discard them:
+
+```text id="lhzcrv"
+Esc
+:q!
+```
+
+If you want to save and exit:
+
+```text id="47ztwe"
+Esc
+:wq
+```
+
+---
+
+## Mistake 3: Using Global Replace Without Checking
+
+Dangerous habit:
+
+```text id="t0ejl8"
+:%s/old/new/g
+```
+
+without checking how many matches exist.
+
+Better:
+
+```bash id="mrbhru"
+grep -n "old" file.txt
+```
+
+Then use:
+
+```text id="vpmhld"
+:%s/old/new/gc
+```
+
+The confirmation option reduces accidental broad replacements.
+
+---
+
+## Mistake 4: Editing the Wrong Server
+
+Before production changes, check:
+
+```bash id="jff0vp"
+hostname
+whoami
+pwd
+```
+
+Also verify the application environment through your organization's approved methods.
+
+A perfectly executed edit on the wrong server is still a failed change.
+
+---
+
+## Mistake 5: Editing Without a Rollback Plan
+
+Before an approved change, know:
+
+```text id="5rrm8b"
+What is changing?
+What is the expected result?
+How will I validate it?
+What is the rollback method?
+Who approved the change?
+Does the service need reload or restart?
+```
+
+Knowing `vi` commands does not replace operational discipline.
+
+---
+
+# 🎯 Interview Questions and Answers
+
+## Q1. What is the VI editor?
+
+VI is a terminal-based text editor used to create, view, and modify text files.
+
+---
+
+## Q2. What are the main VI modes?
+
+For beginner understanding:
+
+```text id="1fs1wg"
+Normal Mode
+Insert Mode
+Command-Line Mode
+```
+
+---
+
+## Q3. How do you enter Insert Mode?
+
+Common commands:
+
+```text id="r9k75m"
+i
+I
+a
+A
+o
+O
+```
+
+---
+
+## Q4. How do you return to Normal Mode?
+
+```text id="ys8i73"
+Esc
+```
+
+---
+
+## Q5. How do you save a file?
+
+```text id="qhd23i"
+:w
+```
+
+---
+
+## Q6. How do you save and exit?
+
+```text id="pdk2ob"
+:wq
+```
+
+---
+
+## Q7. How do you exit without saving?
+
+```text id="5bf34v"
+:q!
+```
+
+---
+
+## Q8. How do you delete one line?
+
+```text id="ufb9kc"
+dd
+```
+
+---
+
+## Q9. How do you delete five lines?
+
+```text id="34vmrx"
+5dd
+```
+
+---
+
+## Q10. How do you copy a line?
+
+```text id="mwb0uh"
+yy
+```
+
+---
+
+## Q11. How do you paste?
+
+```text id="x6f2jy"
+p
+```
+
+or:
+
+```text id="td3knn"
+P
+```
+
+depending on where you want the text inserted.
+
+---
+
+## Q12. How do you undo?
+
+```text id="qz7bbn"
+u
+```
+
+---
+
+## Q13. How do you search for a word?
+
+```text id="ufvplb"
+/word
+```
+
+---
+
+## Q14. How do you find the next match?
+
+```text id="6ce8ja"
+n
+```
+
+---
+
+## Q15. How do you go to the last line?
+
+```text id="q1gih5"
+G
+```
+
+---
+
+## Q16. How do you go to the first line?
+
+Common Vim-compatible command:
+
+```text id="o1we7h"
+gg
+```
+
+Traditional form:
+
+```text id="v29axz"
+1G
+```
+
+---
+
+## Q17. How do you go to line 100?
+
+```text id="t5u05h"
+:100
+```
+
+or:
+
+```text id="61e85i"
+100G
+```
+
+---
+
+## Q18. How do you show line numbers?
+
+```text id="4ktzla"
+:set number
+```
+
+---
+
+## Q19. How do you replace all occurrences in a file?
+
+```text id="2e5zmm"
+:%s/old/new/g
+```
+
+For confirmation:
+
+```text id="r8yqgv"
+:%s/old/new/gc
+```
+
+---
+
+## Q20. What should you do before editing a production configuration file?
+
+A strong answer:
+
+```text id="nnwq36"
+First, I verify the correct server, environment, user, and file path.
+
+I check the current value and permissions.
+
+I confirm the approved incident or change procedure.
+
+If the procedure requires it, I create and verify a backup.
+
+I make only the approved change.
+
+Then I verify the file difference, validate configuration syntax where possible, perform any approved reload or restart, validate application health, and document the result.
+```
+
+---
+
+# 📌 Quick Revision
+
+```text id="29zqoq"
+vi file
+→ Open file
+
+i
+→ Insert before cursor
+
+a
+→ Append after cursor
+
+A
+→ Append at line end
+
+o
+→ New line below
+
+O
+→ New line above
+
+Esc
+→ Normal Mode
+
+:w
+→ Save
+
+:q
+→ Quit
+
+:wq
+→ Save and quit
+
+:q!
+→ Quit without saving
+
+dd
+→ Delete line
+
+5dd
+→ Delete 5 lines
+
+yy
+→ Copy line
+
+5yy
+→ Copy 5 lines
+
+p
+→ Paste after/below
+
+P
+→ Paste before/above
+
+u
+→ Undo
+
+Ctrl+r
+→ Redo in Vim-compatible editors
+
+/word
+→ Search forward
+
+?word
+→ Search backward
+
+n
+→ Next match
+
+N
+→ Previous/op
+```
