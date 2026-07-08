@@ -1,0 +1,1532 @@
+# 🐧 Linux `wc`, `mv`, and `cp` Commands
+
+This chapter explains three important Linux commands:
+
+1. `wc` – Count lines, words, bytes, and characters
+2. `mv` – Move or rename files and directories
+3. `cp` – Copy files and directories
+
+These commands are useful in daily Linux work and Production Support activities.
+
+---
+
+# 1. `wc` Command
+
+## What is `wc`?
+
+`wc` means:
+
+```text
+Word Count
+```
+
+The `wc` command is used to count:
+
+* Lines
+* Words
+* Bytes
+* Characters
+
+Think about a school teacher checking an essay.
+
+The teacher may ask:
+
+```text
+How many lines?
+How many words?
+How many characters?
+```
+
+Linux can count these using the `wc` command.
+
+---
+
+## Basic Syntax
+
+```bash
+wc [OPTIONS] FILE
+```
+
+Example:
+
+```bash
+wc students.txt
+```
+
+Suppose `students.txt` contains:
+
+```text
+Ravi Class Five
+Raju Class Six
+Sita Class Seven
+```
+
+Run:
+
+```bash
+wc students.txt
+```
+
+Example output:
+
+```text
+3 9 49 students.txt
+```
+
+The output order is:
+
+```text
+Lines   Words   Bytes   Filename
+  3       9       49    students.txt
+```
+
+The byte count can differ depending on the exact file content, spaces, line endings, and character encoding.
+
+---
+
+# Important `wc` Options
+
+## `wc -l` – Count Lines
+
+The `-l` option counts newline characters.
+
+```bash
+wc -l students.txt
+```
+
+Example:
+
+```text
+3 students.txt
+```
+
+This is one of the most frequently used `wc` options.
+
+---
+
+## Simple PSA Example
+
+Suppose you have an application log:
+
+```text
+INFO Application started
+INFO Database connected
+ERROR Payment failed
+INFO User logged in
+ERROR Connection timeout
+```
+
+To count the number of lines:
+
+```bash
+wc -l application.log
+```
+
+Example:
+
+```text
+5 application.log
+```
+
+---
+
+## `wc -w` – Count Words
+
+```bash
+wc -w students.txt
+```
+
+Example:
+
+```text
+9 students.txt
+```
+
+The `-w` option counts words separated by whitespace.
+
+---
+
+## `wc -c` – Count Bytes
+
+```bash
+wc -c students.txt
+```
+
+This displays the file size in bytes as counted from the input.
+
+Example:
+
+```text
+49 students.txt
+```
+
+---
+
+## `wc -m` – Count Characters
+
+```bash
+wc -m students.txt
+```
+
+This counts characters.
+
+For simple ASCII text:
+
+```text
+wc -c
+```
+
+and:
+
+```text
+wc -m
+```
+
+may show the same number.
+
+For multibyte characters, the results can differ.
+
+Simple idea:
+
+```text
+-c → Bytes
+
+-m → Characters
+```
+
+---
+
+## `wc -L` – Length of the Longest Line
+
+```bash
+wc -L students.txt
+```
+
+This displays the display width of the longest line on GNU systems.
+
+Example:
+
+```text
+16 students.txt
+```
+
+This can be useful when inspecting unusually long lines in structured files.
+
+---
+
+# Using `wc` with Multiple Files
+
+Suppose you have:
+
+```text
+file1.txt
+file2.txt
+```
+
+Run:
+
+```bash
+wc -l file1.txt file2.txt
+```
+
+Example:
+
+```text
+10 file1.txt
+20 file2.txt
+30 total
+```
+
+Linux displays the count for each file and a total.
+
+---
+
+# Using `wc` with Pipes
+
+This is very important for PSA work.
+
+## Count Matching Error Lines
+
+```bash
+grep -i "error" application.log | wc -l
+```
+
+Flow:
+
+```text
+application.log
+        ↓
+grep finds matching error lines
+        ↓
+wc -l counts those lines
+        ↓
+Final count is displayed
+```
+
+Example output:
+
+```text
+25
+```
+
+This means 25 lines matched the search condition.
+
+Important: this counts matching lines, not necessarily 25 unique incidents.
+
+One incident may produce multiple error lines.
+
+---
+
+## Count Running Process Matches
+
+Example:
+
+```bash
+ps -ef | grep java | wc -l
+```
+
+Be careful with this pattern.
+
+The `grep java` command itself may appear in the output, so the result can be misleading.
+
+A better option on many Linux systems is:
+
+```bash
+pgrep -c java
+```
+
+or inspect the process list carefully.
+
+Do not assume that a count automatically proves the application is healthy.
+
+---
+
+## Count Files in the Current Directory
+
+A common but imperfect command is:
+
+```bash
+ls | wc -l
+```
+
+This counts output lines from `ls`, not a guaranteed count of all files.
+
+A better command for regular files directly inside the current directory is:
+
+```bash
+find . -maxdepth 1 -type f | wc -l
+```
+
+This distinction matters in production troubleshooting.
+
+---
+
+# Important `wc` Options Summary
+
+| Option | Purpose                         |
+| ------ | ------------------------------- |
+| `-l`   | Count lines                     |
+| `-w`   | Count words                     |
+| `-c`   | Count bytes                     |
+| `-m`   | Count characters                |
+| `-L`   | Show longest line display width |
+
+---
+
+# PSA Scenario – Count Errors
+
+Incident:
+
+> Users are reporting payment failures.
+
+Check recent errors:
+
+```bash
+grep -i "error" payment.log | wc -l
+```
+
+Better investigation:
+
+```bash
+grep "2026-07-08 14:" payment.log | grep -i "error" | wc -l
+```
+
+This narrows the count to a specific hour if the log timestamp format matches that pattern.
+
+Even better, use:
+
+* Transaction ID
+* Request ID
+* Correlation ID
+* Error code
+* Exact time range
+
+Counting all historical errors without a time window can lead you to the wrong conclusion.
+
+---
+
+# 2. `mv` Command
+
+## What is `mv`?
+
+`mv` means:
+
+```text
+Move
+```
+
+The `mv` command has two main purposes:
+
+```text
+1. Move a file or directory
+2. Rename a file or directory
+```
+
+Think about a school notebook.
+
+You can:
+
+```text
+Move it from Bag A to Bag B
+
+or
+
+Change its label from Maths to Mathematics
+```
+
+The `mv` command does similar work in Linux.
+
+---
+
+## Basic Syntax
+
+```bash
+mv [OPTIONS] SOURCE DESTINATION
+```
+
+---
+
+# Rename a File
+
+Suppose you have:
+
+```text
+old.txt
+```
+
+Run:
+
+```bash
+mv old.txt new.txt
+```
+
+Before:
+
+```text
+old.txt
+```
+
+After:
+
+```text
+new.txt
+```
+
+The file has been renamed.
+
+---
+
+# Rename a Directory
+
+```bash
+mv old-directory new-directory
+```
+
+Example:
+
+```bash
+mv logs old-logs
+```
+
+Before:
+
+```text
+logs/
+```
+
+After:
+
+```text
+old-logs/
+```
+
+---
+
+# Move a File into a Directory
+
+Suppose:
+
+```text
+application.log
+backup/
+```
+
+Run:
+
+```bash
+mv application.log backup/
+```
+
+Result:
+
+```text
+backup/
+└── application.log
+```
+
+---
+
+# Move Multiple Files
+
+Suppose:
+
+```text
+app.log
+error.log
+access.log
+backup/
+```
+
+Run:
+
+```bash
+mv app.log error.log access.log backup/
+```
+
+All three files move into the `backup` directory.
+
+When moving multiple sources, the final argument must be a directory.
+
+---
+
+# Important `mv` Options
+
+## `mv -i` – Interactive Mode
+
+```bash
+mv -i app.log backup/
+```
+
+If the destination already contains a file with the same name, `mv` asks for confirmation before overwriting.
+
+Example prompt:
+
+```text
+mv: overwrite 'backup/app.log'?
+```
+
+This is safer when working with important files.
+
+---
+
+## `mv -f` – Force
+
+```bash
+mv -f app.log backup/
+```
+
+This forces the move operation without normal overwrite prompting.
+
+Use carefully.
+
+Do not use `-f` simply because a command failed. First understand why it failed.
+
+---
+
+## `mv -n` – No Clobber
+
+```bash
+mv -n app.log backup/
+```
+
+If the destination file already exists, it is not overwritten.
+
+This is useful when you want to avoid accidental replacement.
+
+---
+
+## `mv -v` – Verbose Mode
+
+```bash
+mv -v app.log backup/
+```
+
+Example:
+
+```text
+renamed 'app.log' -> 'backup/app.log'
+```
+
+Verbose mode shows what the command is doing.
+
+---
+
+## `mv -u` – Update
+
+```bash
+mv -u source.log backup/
+```
+
+On GNU systems, this moves the source when it is newer than the destination or when the destination is missing.
+
+Check your system manual before depending on exact update behavior:
+
+```bash
+man mv
+```
+
+---
+
+# Important `mv` Options Summary
+
+| Option | Purpose                                     |
+| ------ | ------------------------------------------- |
+| `-i`   | Ask before overwrite                        |
+| `-f`   | Force operation                             |
+| `-n`   | Do not overwrite existing destination       |
+| `-v`   | Show what is being moved                    |
+| `-u`   | Move based on source/destination timestamps |
+
+---
+
+# PSA Scenario – Archive an Old Log File
+
+Suppose:
+
+```text
+application.log
+```
+
+needs to be moved to an archive directory.
+
+First inspect:
+
+```bash
+ls -lh application.log
+```
+
+Then:
+
+```bash
+mv application.log archive/
+```
+
+Check:
+
+```bash
+ls -lh archive/
+```
+
+Important production warning:
+
+Do not move an active application log blindly.
+
+Some applications continue writing to the same open file descriptor even after the filename is moved.
+
+Others may recreate the file.
+
+Log handling should follow the application's logging and log-rotation design.
+
+For production logs, tools such as `logrotate` or application-specific rotation policies are often more appropriate than manual movement.
+
+---
+
+# PSA Scenario – Rename a Configuration File
+
+Suppose you are preparing a controlled configuration change.
+
+A simple lab example:
+
+```bash
+cp application.conf application.conf.backup
+```
+
+Then edit the original file.
+
+This is often safer than:
+
+```bash
+mv application.conf application.conf.backup
+```
+
+because moving the original temporarily removes the expected configuration filename.
+
+The correct production procedure depends on the application's change process.
+
+---
+
+# 3. `cp` Command
+
+## What is `cp`?
+
+`cp` means:
+
+```text
+Copy
+```
+
+It creates a copy of a file or directory.
+
+Think about photocopying a school note.
+
+Original:
+
+```text
+Maths Notes
+```
+
+After copying:
+
+```text
+Original Maths Notes
++
+Copy of Maths Notes
+```
+
+The original remains available.
+
+---
+
+## Basic Syntax
+
+```bash
+cp [OPTIONS] SOURCE DESTINATION
+```
+
+---
+
+# Copy a File
+
+```bash
+cp source.txt destination.txt
+```
+
+Example:
+
+```bash
+cp application.conf application.conf.backup
+```
+
+Now both files exist:
+
+```text
+application.conf
+application.conf.backup
+```
+
+---
+
+# Copy a File into a Directory
+
+Suppose:
+
+```text
+app.log
+backup/
+```
+
+Run:
+
+```bash
+cp app.log backup/
+```
+
+Result:
+
+```text
+app.log
+
+backup/
+└── app.log
+```
+
+The original file still exists.
+
+This is the main difference between `cp` and `mv`.
+
+---
+
+# Copy Multiple Files
+
+```bash
+cp app.log error.log access.log backup/
+```
+
+The destination must be a directory when copying multiple source files.
+
+---
+
+# Copy a Directory
+
+This command normally fails for a directory:
+
+```bash
+cp project backup/
+```
+
+You need recursive copying:
+
+```bash
+cp -r project backup/
+```
+
+or:
+
+```bash
+cp -R project backup/
+```
+
+---
+
+# `cp -r` – Recursive Copy
+
+Suppose:
+
+```text
+project/
+├── config/
+│   └── app.conf
+└── logs/
+    └── app.log
+```
+
+Run:
+
+```bash
+cp -r project project-backup
+```
+
+Now:
+
+```text
+project/
+project-backup/
+```
+
+both exist.
+
+---
+
+# `cp -i` – Interactive Mode
+
+```bash
+cp -i application.conf backup/
+```
+
+If the destination file already exists, `cp` asks before overwriting it.
+
+This is useful for reducing accidental replacement.
+
+---
+
+# `cp -f` – Force
+
+```bash
+cp -f source.txt destination.txt
+```
+
+This forces copying behavior when possible.
+
+Use carefully.
+
+Do not use `-f` as a default habit.
+
+---
+
+# `cp -n` – No Clobber
+
+```bash
+cp -n source.txt destination.txt
+```
+
+If the destination already exists, GNU `cp` does not overwrite it.
+
+---
+
+# `cp -v` – Verbose Mode
+
+```bash
+cp -v app.log backup/
+```
+
+Example:
+
+```text
+'app.log' -> 'backup/app.log'
+```
+
+---
+
+# `cp -p` – Preserve Attributes
+
+```bash
+cp -p source.txt destination.txt
+```
+
+This preserves selected attributes such as:
+
+* Mode
+* Ownership, when permitted
+* Timestamps
+
+The exact result can depend on permissions and system behavior.
+
+This can matter when copying operational files where metadata is important.
+
+---
+
+# `cp -a` – Archive Mode
+
+```bash
+cp -a source-directory backup-directory
+```
+
+On GNU systems, archive mode is designed to copy directory trees while preserving important metadata and links.
+
+It is commonly similar to:
+
+```text
+-dR --preserve=all
+```
+
+For exact behavior, check:
+
+```bash
+man cp
+```
+
+This is generally more appropriate than plain `cp -r` when you need a faithful filesystem-level copy.
+
+---
+
+# `cp -u` – Update
+
+```bash
+cp -u source.txt backup/
+```
+
+On GNU systems, this copies when the source is newer than the destination or when the destination does not exist.
+
+---
+
+# Copy with a New Name
+
+```bash
+cp application.log application-copy.log
+```
+
+Now:
+
+```text
+application.log
+application-copy.log
+```
+
+both exist.
+
+---
+
+# Important `cp` Options Summary
+
+| Option     | Purpose                                     |
+| ---------- | ------------------------------------------- |
+| `-r`, `-R` | Copy directories recursively                |
+| `-i`       | Ask before overwrite                        |
+| `-f`       | Force copying behavior                      |
+| `-n`       | Do not overwrite existing destination       |
+| `-v`       | Show copied files                           |
+| `-p`       | Preserve selected attributes                |
+| `-a`       | Archive mode                                |
+| `-u`       | Copy based on source/destination timestamps |
+
+---
+
+# `cp` vs `mv`
+
+This is an important interview question.
+
+## `cp`
+
+```bash
+cp file.txt backup/
+```
+
+Result:
+
+```text
+Original location:
+file.txt
+
+Backup location:
+file.txt
+```
+
+The source remains.
+
+---
+
+## `mv`
+
+```bash
+mv file.txt backup/
+```
+
+Result:
+
+```text
+Original location:
+File no longer present under the old name
+
+Backup location:
+file.txt
+```
+
+The source pathname is moved or renamed.
+
+---
+
+# Simple Comparison
+
+| Command | Source Remains?            | Main Purpose   |
+| ------- | -------------------------- | -------------- |
+| `cp`    | Yes                        | Copy           |
+| `mv`    | No under original pathname | Move or rename |
+
+---
+
+# 🧪 Complete Ubuntu Practice Lab
+
+## Step 1: Create Practice Directory
+
+```bash
+cd ~
+mkdir wc-cp-mv-lab
+cd wc-cp-mv-lab
+```
+
+---
+
+## Step 2: Create a Sample File
+
+```bash
+cat > employees.txt
+```
+
+Type:
+
+```text
+101 Ravi Support
+102 Sita Developer
+103 Raju Tester
+104 Anu Support
+105 Kiran Developer
+```
+
+Press:
+
+```text
+Ctrl + D
+```
+
+Check:
+
+```bash
+cat employees.txt
+```
+
+---
+
+## Step 3: Practice `wc`
+
+Count everything:
+
+```bash
+wc employees.txt
+```
+
+Count lines:
+
+```bash
+wc -l employees.txt
+```
+
+Count words:
+
+```bash
+wc -w employees.txt
+```
+
+Count bytes:
+
+```bash
+wc -c employees.txt
+```
+
+Count characters:
+
+```bash
+wc -m employees.txt
+```
+
+---
+
+## Step 4: Count Support Records
+
+```bash
+grep "Support" employees.txt | wc -l
+```
+
+Expected result:
+
+```text
+2
+```
+
+---
+
+## Step 5: Create Backup Directory
+
+```bash
+mkdir backup
+```
+
+---
+
+## Step 6: Practice `cp`
+
+```bash
+cp employees.txt backup/
+```
+
+Check:
+
+```bash
+ls -l
+```
+
+Then:
+
+```bash
+ls -l backup/
+```
+
+You should see the file in both locations.
+
+---
+
+## Step 7: Copy with a New Name
+
+```bash
+cp employees.txt employees-copy.txt
+```
+
+Check:
+
+```bash
+ls -l
+```
+
+---
+
+## Step 8: Practice `mv` Rename
+
+```bash
+mv employees-copy.txt old-employees.txt
+```
+
+Check:
+
+```bash
+ls -l
+```
+
+---
+
+## Step 9: Move the Renamed File
+
+```bash
+mv old-employees.txt backup/
+```
+
+Check:
+
+```bash
+ls -l
+ls -l backup/
+```
+
+---
+
+## Step 10: Practice Directory Copy
+
+Create:
+
+```bash
+mkdir -p application/{config,logs}
+```
+
+Create files:
+
+```bash
+touch application/config/app.conf
+touch application/logs/app.log
+```
+
+Copy the complete directory:
+
+```bash
+cp -r application application-copy
+```
+
+Check:
+
+```bash
+find application-copy -maxdepth 3 -print
+```
+
+---
+
+# 🧑‍💻 PSA Real-Time Scenario 1 – Backup Before Configuration Change
+
+Suppose a change request requires editing:
+
+```text
+application.conf
+```
+
+First inspect the file:
+
+```bash
+ls -l application.conf
+```
+
+Create a backup with a timestamp in the filename:
+
+```bash
+cp -p application.conf application.conf.bak-20260708
+```
+
+Verify:
+
+```bash
+ls -l application.conf*
+```
+
+Then follow the approved change procedure.
+
+A stronger habit is to use a timestamp that includes time when multiple changes can happen on the same day.
+
+Example:
+
+```bash
+cp -p application.conf application.conf.bak-20260708-1530
+```
+
+---
+
+# 🧑‍💻 PSA Real-Time Scenario 2 – Count Errors
+
+Suppose a payment issue happened around 2 PM.
+
+A simple example:
+
+```bash
+grep "2026-07-08 14:" payment.log | grep -i "error" | wc -l
+```
+
+Output:
+
+```text
+17
+```
+
+Interpretation:
+
+```text
+17 log lines matched the filters.
+```
+
+Do not automatically report:
+
+```text
+17 payment transactions failed.
+```
+
+One failed transaction may generate several error lines.
+
+This is a common analytical mistake in production support.
+
+---
+
+# 🧑‍💻 PSA Real-Time Scenario 3 – Move an Incident File
+
+Suppose a diagnostic file has been approved for movement to an incident workspace.
+
+Check:
+
+```bash
+ls -lh diagnostic.log
+```
+
+Move with verbose output:
+
+```bash
+mv -v diagnostic.log /tmp/incident-workspace/
+```
+
+Verify:
+
+```bash
+ls -lh /tmp/incident-workspace/
+```
+
+But remember: `/tmp` is temporary storage and may be cleaned automatically. Do not use it as permanent incident evidence storage.
+
+---
+
+# 🎯 Interview Questions and Answers
+
+## Q1. What is the `wc` command?
+
+`wc` counts lines, words, bytes, and characters from files or standard input.
+
+---
+
+## Q2. How do you count lines in a file?
+
+```bash
+wc -l file.txt
+```
+
+---
+
+## Q3. How do you count error lines?
+
+```bash
+grep -i "error" application.log | wc -l
+```
+
+This counts matching lines, not necessarily unique incidents.
+
+---
+
+## Q4. What is the difference between `wc -c` and `wc -m`?
+
+```text
+wc -c
+→ Counts bytes
+
+wc -m
+→ Counts characters
+```
+
+They may differ for multibyte text.
+
+---
+
+## Q5. What is the purpose of `mv`?
+
+`mv` is used to move or rename files and directories.
+
+---
+
+## Q6. How do you rename a file?
+
+```bash
+mv old.txt new.txt
+```
+
+---
+
+## Q7. How do you move multiple files?
+
+```bash
+mv file1 file2 file3 destination-directory/
+```
+
+---
+
+## Q8. What does `mv -i` do?
+
+It asks for confirmation before overwriting an existing destination file.
+
+---
+
+## Q9. What is the purpose of `cp`?
+
+`cp` copies files and directories.
+
+---
+
+## Q10. How do you copy a directory?
+
+```bash
+cp -r source-directory destination
+```
+
+For a more metadata-preserving copy on GNU systems:
+
+```bash
+cp -a source-directory destination
+```
+
+---
+
+## Q11. What is the difference between `cp` and `mv`?
+
+`cp` creates another copy while keeping the source.
+
+`mv` changes the source's pathname by moving or renaming it.
+
+---
+
+## Q12. What does `cp -p` do?
+
+It preserves selected file attributes such as mode and timestamps, and ownership when permissions allow.
+
+---
+
+## Q13. What does `cp -a` do?
+
+Archive mode recursively copies while preserving important filesystem metadata and links.
+
+It is useful when a more faithful copy is required.
+
+---
+
+## Q14. How do you avoid overwriting an existing file?
+
+For copy:
+
+```bash
+cp -n source.txt destination.txt
+```
+
+For move:
+
+```bash
+mv -n source.txt destination/
+```
+
+---
+
+## Q15. Before changing a production configuration file, what should you do?
+
+A strong answer is:
+
+1. Confirm the correct server and environment.
+2. Confirm the approved change or incident process.
+3. Verify the exact file path.
+4. Check ownership and permissions.
+5. Create and verify a backup if the procedure requires it.
+6. Make the approved change.
+7. Validate configuration syntax where supported.
+8. Restart or reload only if required and approved.
+9. Validate application health.
+10. Document the result and rollback if validation fails.
+
+The command is only one part of safe production work.
+
+---
+
+# 📌 Quick Revision
+
+```text
+wc file
+→ Count lines, words, and bytes
+
+wc -l file
+→ Count lines
+
+wc -w file
+→ Count words
+
+wc -c file
+→ Count bytes
+
+wc -m file
+→ Count characters
+
+wc -L file
+→ Longest line display width on GNU systems
+
+
+mv old new
+→ Rename
+
+mv file directory/
+→ Move file
+
+mv -i
+→ Ask before overwrite
+
+mv -n
+→ Do not overwrite
+
+mv -v
+→ Show operation
+
+
+cp source destination
+→ Copy file
+
+cp file directory/
+→ Copy into directory
+
+cp -r directory destination
+→ Recursive copy
+
+cp -i
+→ Ask before overwrite
+
+cp -n
+→ Do not overwrite
+
+cp -p
+→ Preserve selected attributes
+
+cp -a
+→ Archive-style copy
+
+cp -v
+→ Show operation
+```
+
+# Final Practice Challenge
+
+Create this structure:
+
+```text
+psa-practice/
+├── application/
+│   ├── config/
+│   │   └── app.conf
+│   └── logs/
+│       └── application.log
+└── backup/
+```
+
+Then perform these tasks:
+
+1. Add 20 lines to `application.log`.
+2. Count total lines.
+3. Count lines containing `ERROR`.
+4. Copy `app.conf` into `backup`.
+5. Preserve its metadata during the copy.
+6. Rename the copied file to `app.conf.backup`.
+7. Copy the complete `application` directory.
+8. Move the copied directory into `backup`.
+9. Verify every operation with `ls`, `find`, and `wc`.
+10. Explain the difference between `cp`, `mv`, and `wc` without looking at notes.
+
+The goal is not to memorize option tables. For PSA interviews, you should be able to explain what happens to the source, what happens to the destination, whether overwriting is possible, and how you would verify the result.
