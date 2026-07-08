@@ -1,0 +1,2436 @@
+# 🐧 Linux `sed` Command – Complete Beginner to PSA Guide
+
+## Introduction
+
+`sed` is a powerful Linux command used for text processing.
+
+`sed` stands for:
+
+```text
+Stream Editor
+```
+
+It can:
+
+* Search text
+* Replace text
+* Delete lines
+* Print selected lines
+* Insert text
+* Append text
+* Change complete lines
+* Work with line numbers
+* Work with regular expressions
+* Modify files
+* Process command output through pipes
+
+For a Production Support Analyst, `sed` can be useful for:
+
+```text
+Reading selected log lines
+Filtering log output
+Replacing configuration values
+Removing unwanted output
+Masking sensitive values in copied diagnostic data
+Changing text in controlled files
+Processing command output
+Automating repetitive text changes
+```
+
+---
+
+# 1. What is `sed`?
+
+`sed` is a Stream Editor.
+
+Let us understand this in a simple way.
+
+Suppose a teacher has this sentence:
+
+```text
+Ravi likes Mango
+```
+
+The teacher wants to change:
+
+```text
+Mango
+```
+
+to:
+
+```text
+Apple
+```
+
+Using `sed`:
+
+```bash
+sed 's/Mango/Apple/' file.txt
+```
+
+Output:
+
+```text
+Ravi likes Apple
+```
+
+Simple meaning:
+
+```text
+Read text
+    ↓
+Find a pattern
+    ↓
+Perform an action
+    ↓
+Display the result
+```
+
+---
+
+# 2. Important Behavior of `sed`
+
+Suppose `student.txt` contains:
+
+```text
+Ravi likes Mango
+```
+
+Run:
+
+```bash
+sed 's/Mango/Apple/' student.txt
+```
+
+Output:
+
+```text
+Ravi likes Apple
+```
+
+Now check the original file:
+
+```bash
+cat student.txt
+```
+
+It still contains:
+
+```text
+Ravi likes Mango
+```
+
+Why?
+
+Because normal `sed` processing does not modify the original file.
+
+It reads the input, performs the operation, and sends the result to standard output.
+
+This is extremely important.
+
+---
+
+# 3. Basic Syntax
+
+```bash
+sed [OPTIONS] 'COMMAND' FILE
+```
+
+Example:
+
+```bash
+sed 's/old/new/' file.txt
+```
+
+The most common `sed` command is:
+
+```text
+s
+```
+
+which means:
+
+```text
+Substitute
+```
+
+---
+
+# 4. Understanding the Substitute Command
+
+Example:
+
+```bash
+sed 's/Linux/Unix/' file.txt
+```
+
+Breakdown:
+
+```text
+s/Linux/Unix/
+
+s
+↓
+Substitute
+
+Linux
+↓
+Search pattern
+
+Unix
+↓
+Replacement text
+```
+
+General format:
+
+```text
+s/search/replacement/
+```
+
+---
+
+# 5. Create a Practice File
+
+Create:
+
+```bash
+cat > employees.txt
+```
+
+Enter:
+
+```text
+101 Ravi Support Hyderabad
+102 Sita Developer Chennai
+103 Raju Support Hyderabad
+104 Anu Tester Bangalore
+105 Kiran Developer Hyderabad
+106 Ravi Support Chennai
+107 Priya Tester Hyderabad
+108 Arun Support Bangalore
+109 Meena Developer Chennai
+110 Rakesh Support Hyderabad
+```
+
+Press:
+
+```text
+Ctrl + D
+```
+
+Check:
+
+```bash
+cat employees.txt
+```
+
+---
+
+# 6. Basic Search and Replace
+
+Suppose you want to replace:
+
+```text
+Support
+```
+
+with:
+
+```text
+ProductionSupport
+```
+
+Run:
+
+```bash
+sed 's/Support/ProductionSupport/' employees.txt
+```
+
+The changed output is displayed.
+
+The original file is not modified.
+
+Verify:
+
+```bash
+cat employees.txt
+```
+
+---
+
+# 7. Replace Only the First Match on Each Line
+
+Suppose `fruits.txt` contains:
+
+```text
+apple mango apple apple
+apple banana apple
+```
+
+Run:
+
+```bash
+sed 's/apple/orange/' fruits.txt
+```
+
+Output:
+
+```text
+orange mango apple apple
+orange banana apple
+```
+
+Only the first `apple` on each line is replaced.
+
+This is the default substitution behavior.
+
+---
+
+# 8. Replace All Matches on Each Line with `g`
+
+Use the `g` flag:
+
+```bash
+sed 's/apple/orange/g' fruits.txt
+```
+
+Output:
+
+```text
+orange mango orange orange
+orange banana orange
+```
+
+`g` means:
+
+```text
+Global replacement within each selected line
+```
+
+Important:
+
+Without `g`:
+
+```bash
+sed 's/apple/orange/' file.txt
+```
+
+Only the first matching occurrence on each line is replaced.
+
+With `g`:
+
+```bash
+sed 's/apple/orange/g' file.txt
+```
+
+All matching occurrences on each selected line are replaced.
+
+---
+
+# 9. Case-Insensitive Replacement
+
+On GNU `sed`, you can use:
+
+```bash
+sed 's/error/issue/gI' application.log
+```
+
+This can match:
+
+```text
+ERROR
+Error
+error
+eRRoR
+```
+
+Another commonly seen GNU form is:
+
+```bash
+sed 's/error/issue/gi' application.log
+```
+
+Case-insensitive flags can vary across `sed` implementations.
+
+For portable scripts, understand the target operating system before depending on implementation-specific behavior.
+
+---
+
+# 10. Print a Specific Line
+
+Suppose you want to print line 5.
+
+Use:
+
+```bash
+sed -n '5p' employees.txt
+```
+
+Meaning:
+
+```text
+-n
+↓
+Suppress normal automatic output
+
+5
+↓
+Line number
+
+p
+↓
+Print
+```
+
+Without `-n`:
+
+```bash
+sed '5p' employees.txt
+```
+
+line 5 may appear twice because:
+
+1. `sed` prints lines automatically.
+2. The `p` command prints line 5 again.
+
+Therefore, for selective printing, use:
+
+```bash
+sed -n '5p' file.txt
+```
+
+---
+
+# 11. Print a Range of Lines
+
+Print lines 3 to 7:
+
+```bash
+sed -n '3,7p' employees.txt
+```
+
+This displays:
+
+```text
+Line 3
+Line 4
+Line 5
+Line 6
+Line 7
+```
+
+This is useful when you want a specific section of a text file.
+
+---
+
+# 12. Print the First Line
+
+```bash
+sed -n '1p' employees.txt
+```
+
+---
+
+# 13. Print the Last Line
+
+Use:
+
+```bash
+sed -n '$p' employees.txt
+```
+
+Here:
+
+```text
+$
+```
+
+means:
+
+```text
+Last line
+```
+
+---
+
+# 14. Print from a Line Number to the End
+
+Example:
+
+```bash
+sed -n '5,$p' employees.txt
+```
+
+This prints:
+
+```text
+Line 5
+through
+Last line
+```
+
+---
+
+# 15. Print Matching Lines
+
+Print lines containing `Support`:
+
+```bash
+sed -n '/Support/p' employees.txt
+```
+
+This is similar to a simple:
+
+```bash
+grep 'Support' employees.txt
+```
+
+But `sed` becomes more useful when the matching line also needs editing or another text-processing action.
+
+---
+
+# 16. Print Between Two Patterns
+
+Suppose a log contains:
+
+```text
+INFO Application started
+START TRANSACTION TXN1001
+INFO Payment request received
+INFO Calling bank service
+ERROR Bank timeout
+END TRANSACTION TXN1001
+INFO Next request
+```
+
+Use:
+
+```bash
+sed -n '/START TRANSACTION/,/END TRANSACTION/p' application.log
+```
+
+This prints everything from the starting pattern through the ending pattern.
+
+This can be useful when logs contain clear transaction boundaries.
+
+Be careful: repeated or missing boundary patterns can make pattern-range output larger than expected.
+
+---
+
+# 17. Delete a Specific Line
+
+Delete line 5 from displayed output:
+
+```bash
+sed '5d' employees.txt
+```
+
+Important:
+
+The original file is not changed unless you explicitly use in-place editing or redirect output to another file.
+
+---
+
+# 18. Delete a Range of Lines
+
+Delete lines 3 to 7 from output:
+
+```bash
+sed '3,7d' employees.txt
+```
+
+---
+
+# 19. Delete the First Line
+
+```bash
+sed '1d' employees.txt
+```
+
+---
+
+# 20. Delete the Last Line
+
+```bash
+sed '$d' employees.txt
+```
+
+---
+
+# 21. Delete Blank Lines
+
+Use:
+
+```bash
+sed '/^$/d' file.txt
+```
+
+Meaning:
+
+```text
+^
+→ Beginning of line
+
+$
+→ End of line
+
+^$
+→ Empty line
+
+d
+→ Delete
+```
+
+This removes completely empty lines from the output.
+
+For lines containing only spaces or tabs, use a whitespace-aware pattern.
+
+A POSIX-style example:
+
+```bash
+sed '/^[[:space:]]*$/d' file.txt
+```
+
+---
+
+# 22. Delete Lines Matching a Pattern
+
+Delete lines containing `INFO`:
+
+```bash
+sed '/INFO/d' application.log
+```
+
+This displays all lines except those matching `INFO`.
+
+Example input:
+
+```text
+INFO Application started
+WARN CPU high
+ERROR Payment failed
+INFO User login
+```
+
+Output:
+
+```text
+WARN CPU high
+ERROR Payment failed
+```
+
+---
+
+# 23. Delete Multiple Types of Lines
+
+Using Extended Regular Expressions:
+
+```bash
+sed -E '/INFO|DEBUG/d' application.log
+```
+
+On GNU `sed`, you may also see:
+
+```bash
+sed -r '/INFO|DEBUG/d' application.log
+```
+
+For modern and more portable usage across implementations supporting it, `-E` is generally clearer.
+
+---
+
+# 24. Insert Text Before a Line
+
+Suppose:
+
+```text
+Linux
+SQL
+Splunk
+```
+
+Use:
+
+```bash
+sed '2i Production Support' file.txt
+```
+
+Output:
+
+```text
+Linux
+Production Support
+SQL
+Splunk
+```
+
+The `i` command means:
+
+```text
+Insert before
+```
+
+---
+
+# 25. Append Text After a Line
+
+Use:
+
+```bash
+sed '2a ServiceNow' file.txt
+```
+
+Output:
+
+```text
+Linux
+SQL
+ServiceNow
+Splunk
+```
+
+The `a` command means:
+
+```text
+Append after
+```
+
+---
+
+# 26. Change a Complete Line
+
+Suppose:
+
+```text
+Linux
+SQL
+Splunk
+```
+
+Use:
+
+```bash
+sed '2c MySQL Database' file.txt
+```
+
+Output:
+
+```text
+Linux
+MySQL Database
+Splunk
+```
+
+The `c` command replaces the selected line with new text.
+
+---
+
+# 27. Replace Text Only on a Specific Line
+
+Suppose:
+
+```text
+Linux old
+SQL old
+Splunk old
+```
+
+Replace `old` with `new` only on line 2:
+
+```bash
+sed '2s/old/new/' file.txt
+```
+
+Output:
+
+```text
+Linux old
+SQL new
+Splunk old
+```
+
+---
+
+# 28. Replace Text in a Line Range
+
+Replace `old` with `new` from lines 2 to 5:
+
+```bash
+sed '2,5s/old/new/g' file.txt
+```
+
+Only the selected line range is processed by that substitution.
+
+---
+
+# 29. Replace Text Only on Matching Lines
+
+Suppose:
+
+```text
+INFO timeout=30
+PAYMENT timeout=30
+DATABASE timeout=30
+PAYMENT retry=3
+```
+
+Change timeout only on lines containing `PAYMENT`:
+
+```bash
+sed '/PAYMENT/s/timeout=30/timeout=60/' file.txt
+```
+
+This is called using an address pattern before the command.
+
+Simple meaning:
+
+```text
+Find lines containing PAYMENT
+        ↓
+On those lines only
+        ↓
+Replace timeout=30 with timeout=60
+```
+
+---
+
+# 30. Use Another Delimiter
+
+The slash `/` is commonly used:
+
+```bash
+sed 's/old/new/' file.txt
+```
+
+But it can become difficult when replacing paths.
+
+Suppose:
+
+```text
+/opt/app/old
+```
+
+needs to become:
+
+```text
+/opt/app/new
+```
+
+You could escape every slash:
+
+```bash
+sed 's/\/opt\/app\/old/\/opt\/app\/new/' file.txt
+```
+
+But this is hard to read.
+
+Use another delimiter:
+
+```bash
+sed 's#/opt/app/old#/opt/app/new#' file.txt
+```
+
+You can also use:
+
+```bash
+sed 's|/opt/app/old|/opt/app/new|' file.txt
+```
+
+This is much easier to understand.
+
+---
+
+# 31. In-Place Editing with `-i`
+
+Normal `sed`:
+
+```bash
+sed 's/INFO/DEBUG/g' application.conf
+```
+
+does not modify the original file.
+
+To edit the file directly on GNU `sed`:
+
+```bash
+sed -i 's/INFO/DEBUG/g' application.conf
+```
+
+Now the original file is changed.
+
+⚠️ Be careful with `-i`.
+
+Before using it on an important file:
+
+```text
+1. Verify the correct server
+2. Verify the correct environment
+3. Verify the exact file
+4. Preview the sed result
+5. Check how many lines will match
+6. Create a backup if required
+7. Perform the approved change
+8. Verify the difference
+9. Validate the application
+```
+
+---
+
+# 32. In-Place Editing with Backup
+
+On GNU `sed`:
+
+```bash
+sed -i.bak 's/INFO/DEBUG/g' application.conf
+```
+
+This changes:
+
+```text
+application.conf
+```
+
+and creates:
+
+```text
+application.conf.bak
+```
+
+Check:
+
+```bash
+ls -l application.conf*
+```
+
+Compare:
+
+```bash
+diff application.conf.bak application.conf
+```
+
+Important:
+
+In-place syntax differs between GNU and BSD/macOS `sed`.
+
+Always check the system implementation before using production scripts across different operating systems.
+
+---
+
+# 33. Preview Before In-Place Editing
+
+Suppose you want to change:
+
+```text
+timeout=30
+```
+
+to:
+
+```text
+timeout=60
+```
+
+First check matches:
+
+```bash
+grep -nF 'timeout=30' application.conf
+```
+
+Then preview:
+
+```bash
+sed 's/timeout=30/timeout=60/g' application.conf
+```
+
+If the result is correct, follow the approved process and then perform the modification.
+
+Example:
+
+```bash
+sed -i.bak 's/timeout=30/timeout=60/g' application.conf
+```
+
+Then verify:
+
+```bash
+grep -nF 'timeout=' application.conf
+```
+
+Compare:
+
+```bash
+diff application.conf.bak application.conf
+```
+
+This workflow is safer than immediately running `sed -i`.
+
+---
+
+# 34. Multiple `sed` Commands with `-e`
+
+You can run multiple operations:
+
+```bash
+sed -e 's/ERROR/FAILURE/g' -e 's/WARN/WARNING/g' application.log
+```
+
+This performs both substitutions.
+
+---
+
+# 35. Multiple Commands with a Script Block
+
+You can also write:
+
+```bash
+sed '
+s/ERROR/FAILURE/g
+s/WARN/WARNING/g
+' application.log
+```
+
+This is useful for readable multi-command processing.
+
+---
+
+# 36. Read `sed` Commands from a File
+
+Create a script file:
+
+```bash
+cat > changes.sed
+```
+
+Add:
+
+```text
+s/ERROR/FAILURE/g
+s/WARN/WARNING/g
+s/INFO/INFORMATION/g
+```
+
+Press:
+
+```text
+Ctrl + D
+```
+
+Run:
+
+```bash
+sed -f changes.sed application.log
+```
+
+This is useful when many text transformations are required.
+
+---
+
+# 37. `sed -n` – Suppress Automatic Printing
+
+By default, `sed` prints each processed line.
+
+Example:
+
+```bash
+sed '5p' file.txt
+```
+
+Line 5 may be printed twice.
+
+Why?
+
+```text
+Automatic printing
++
+Explicit p command
+```
+
+Use:
+
+```bash
+sed -n '5p' file.txt
+```
+
+Now only the explicitly requested line is printed.
+
+---
+
+# 38. `sed -E` – Extended Regular Expressions
+
+Use:
+
+```bash
+sed -E 's/ERROR|WARN/ISSUE/g' application.log
+```
+
+This can replace:
+
+```text
+ERROR
+```
+
+or:
+
+```text
+WARN
+```
+
+with:
+
+```text
+ISSUE
+```
+
+Extended regex is useful for:
+
+```text
+Alternation with |
+Grouping with ()
+One-or-more with +
+Optional patterns with ?
+Repetition counts with {}
+```
+
+---
+
+# 39. Regular Expressions with `sed`
+
+Understanding basic regex makes `sed` much more useful.
+
+---
+
+## `^` – Beginning of Line
+
+Replace `ERROR` only when it appears at the beginning:
+
+```bash
+sed 's/^ERROR/FAILURE/' application.log
+```
+
+---
+
+## `$` – End of Line
+
+Replace `failed` only at the end of a line:
+
+```bash
+sed 's/failed$/FAILED/' application.log
+```
+
+---
+
+## `.` – Any Single Character
+
+Pattern:
+
+```text
+c.t
+```
+
+can match:
+
+```text
+cat
+cot
+cut
+c9t
+```
+
+Example:
+
+```bash
+sed 's/c.t/WORD/g' file.txt
+```
+
+---
+
+## `*` – Zero or More of the Previous Item
+
+Example:
+
+```bash
+sed 's/ab*/X/g' file.txt
+```
+
+Remember:
+
+```text
+*
+```
+
+applies to the previous regex item.
+
+It does not mean "anything" by itself.
+
+---
+
+## Character Classes
+
+Match digits:
+
+```text
+[0-9]
+```
+
+Example:
+
+```bash
+sed 's/[0-9]/X/g' file.txt
+```
+
+Input:
+
+```text
+TXN123
+```
+
+Output:
+
+```text
+TXNXXX
+```
+
+---
+
+# 40. Replace Groups Using Captured Text
+
+With Extended Regular Expressions:
+
+```bash
+echo 'name=Ravi' | sed -E 's/(name=)(.*)/\1Swaroop/'
+```
+
+Output:
+
+```text
+name=Swaroop
+```
+
+Here:
+
+```text
+(name=)
+→ First captured group
+
+\1
+→ Reuse first captured group
+```
+
+Another example:
+
+```bash
+echo 'Ravi Reddy' | sed -E 's/(Ravi) (Reddy)/\2 \1/'
+```
+
+Output:
+
+```text
+Reddy Ravi
+```
+
+This introduces backreferences.
+
+---
+
+# 41. Replace Only the Second Occurrence on Each Line
+
+Suppose:
+
+```text
+apple apple apple
+```
+
+Use:
+
+```bash
+sed 's/apple/orange/2' file.txt
+```
+
+Output:
+
+```text
+apple orange apple
+```
+
+---
+
+# 42. Replace from the Second Occurrence Onward
+
+GNU `sed` supports combinations such as:
+
+```bash
+sed 's/apple/orange/2g' file.txt
+```
+
+For a line containing:
+
+```text
+apple apple apple apple
+```
+
+the result is:
+
+```text
+apple orange orange orange
+```
+
+This behavior is implementation-specific enough that you should test scripts on the target environment.
+
+---
+
+# 43. Print Only Modified Lines
+
+Use the `p` flag with `-n`:
+
+```bash
+sed -n 's/ERROR/FAILURE/p' application.log
+```
+
+Only lines where the substitution succeeds are printed.
+
+This is useful for previewing which lines a replacement would affect.
+
+---
+
+# 44. `sed` with Pipes
+
+`sed` can process output from another command.
+
+Example:
+
+```bash
+ps -ef | sed -n '1,10p'
+```
+
+This prints the first 10 lines of the process output.
+
+Another example:
+
+```bash
+cat application.log | sed '/INFO/d'
+```
+
+But since `sed` can read files directly, prefer:
+
+```bash
+sed '/INFO/d' application.log
+```
+
+The direct form is simpler.
+
+---
+
+# 45. `sed` with `grep`
+
+Suppose you want to find payment lines and replace a displayed label:
+
+```bash
+grep 'PAYMENT' application.log | sed 's/ERROR/FAILURE/g'
+```
+
+Flow:
+
+```text
+application.log
+        ↓
+grep selects PAYMENT lines
+        ↓
+sed changes displayed ERROR text
+        ↓
+Result shown
+```
+
+This does not modify the original log.
+
+---
+
+# 46. `sed` with `tail`
+
+Check recent log lines and remove INFO entries:
+
+```bash
+tail -n 500 application.log | sed '/INFO/d'
+```
+
+This can help focus on:
+
+```text
+WARN
+ERROR
+CRITICAL
+FATAL
+```
+
+But be careful: removing INFO lines can also remove useful context.
+
+Filtering should support investigation, not hide evidence.
+
+---
+
+# 47. `sed` with `find`
+
+Example:
+
+```bash
+find . -type f -name "*.conf" -exec sed -n '/timeout/p' {} +
+```
+
+This searches matching configuration files and prints lines containing `timeout`.
+
+For simply searching text, `grep` is often easier:
+
+```bash
+grep -r 'timeout' . --include='*.conf'
+```
+
+Use the simplest tool that solves the problem clearly.
+
+---
+
+# 48. `sed` vs `grep`
+
+This is an important interview topic.
+
+## `grep`
+
+Main purpose:
+
+```text
+Search and filter matching lines
+```
+
+Example:
+
+```bash
+grep 'ERROR' application.log
+```
+
+---
+
+## `sed`
+
+Main purpose:
+
+```text
+Stream editing and text transformation
+```
+
+Example:
+
+```bash
+sed 's/ERROR/FAILURE/g' application.log
+```
+
+Simple comparison:
+
+| Command | Main Purpose                |
+| ------- | --------------------------- |
+| `grep`  | Search/filter text          |
+| `sed`   | Edit/transform text streams |
+
+There is overlap, but their main strengths differ.
+
+---
+
+# 49. `sed` vs VI Editor
+
+## VI Editor
+
+Interactive editing:
+
+```bash
+vi application.conf
+```
+
+A person opens the file and edits it manually.
+
+---
+
+## `sed`
+
+Non-interactive text processing:
+
+```bash
+sed 's/timeout=30/timeout=60/' application.conf
+```
+
+Useful for repeatable transformations.
+
+Simple comparison:
+
+| Tool  | Style                          |
+| ----- | ------------------------------ |
+| `vi`  | Interactive editing            |
+| `sed` | Non-interactive stream editing |
+
+For one careful production change, interactive editing may sometimes be clearer.
+
+For repeatable automation across controlled files, `sed` may be more suitable.
+
+The right choice depends on the change procedure and risk.
+
+---
+
+# 50. Important `sed` Options
+
+| Option   | Purpose                                          |
+| -------- | ------------------------------------------------ |
+| `-n`     | Suppress automatic printing                      |
+| `-e`     | Add a command                                    |
+| `-f`     | Read commands from a script file                 |
+| `-E`     | Use Extended Regular Expressions                 |
+| `-i`     | Edit files in place on supported implementations |
+| `-i.bak` | In-place edit with backup on GNU sed             |
+
+---
+
+# 🧪 Complete Ubuntu Practice Lab
+
+## Step 1: Create a Practice Directory
+
+```bash
+cd ~
+mkdir sed-practice
+cd sed-practice
+```
+
+---
+
+## Step 2: Create a Sample Log
+
+```bash
+cat > payment.log
+```
+
+Enter:
+
+```text
+2026-07-08 10:00:01 INFO Application started
+2026-07-08 10:01:10 INFO User login USER101
+2026-07-08 10:02:20 WARN Slow response TXN1001
+2026-07-08 10:03:30 ERROR Payment timeout TXN1001
+2026-07-08 10:04:40 INFO Payment successful TXN1002
+2026-07-08 10:05:50 ERROR Database failure TXN1003
+2026-07-08 10:06:10 CRITICAL Database unavailable
+2026-07-08 10:07:20 INFO Retry started TXN1003
+2026-07-08 10:08:30 ERROR Retry failed TXN1003
+2026-07-08 10:09:40 WARN CPU usage high
+2026-07-08 10:10:50 INFO Application healthy
+```
+
+Press:
+
+```text
+Ctrl + D
+```
+
+---
+
+## Step 3: Print Line 5
+
+```bash
+sed -n '5p' payment.log
+```
+
+---
+
+## Step 4: Print Lines 3 to 7
+
+```bash
+sed -n '3,7p' payment.log
+```
+
+---
+
+## Step 5: Print Last Line
+
+```bash
+sed -n '$p' payment.log
+```
+
+---
+
+## Step 6: Print ERROR Lines
+
+```bash
+sed -n '/ERROR/p' payment.log
+```
+
+---
+
+## Step 7: Remove INFO Lines from Display
+
+```bash
+sed '/INFO/d' payment.log
+```
+
+---
+
+## Step 8: Replace ERROR with FAILURE
+
+Preview:
+
+```bash
+sed 's/ERROR/FAILURE/g' payment.log
+```
+
+Check the original:
+
+```bash
+grep 'ERROR' payment.log
+```
+
+The original remains unchanged.
+
+---
+
+## Step 9: Replace Multiple Levels
+
+```bash
+sed -E 's/ERROR|WARN|CRITICAL/ISSUE/g' payment.log
+```
+
+---
+
+## Step 10: Delete Lines 2 to 5 from Output
+
+```bash
+sed '2,5d' payment.log
+```
+
+---
+
+## Step 11: Insert a Header
+
+```bash
+sed '1i PAYMENT APPLICATION LOG' payment.log
+```
+
+---
+
+## Step 12: Append a Footer
+
+```bash
+sed '$a END OF LOG' payment.log
+```
+
+---
+
+## Step 13: Create a Configuration File
+
+```bash
+cat > application.conf
+```
+
+Enter:
+
+```text
+application.name=PaymentService
+server.port=8080
+database.host=localhost
+database.port=3306
+connection.timeout=30
+retry.count=3
+log.level=INFO
+```
+
+Press:
+
+```text
+Ctrl + D
+```
+
+---
+
+## Step 14: Preview a Configuration Change
+
+```bash
+sed 's/connection.timeout=30/connection.timeout=60/' application.conf
+```
+
+---
+
+## Step 15: Verify Match Count
+
+```bash
+grep -nF 'connection.timeout=30' application.conf
+```
+
+---
+
+## Step 16: Perform Lab In-Place Change with Backup
+
+```bash
+sed -i.bak 's/connection.timeout=30/connection.timeout=60/' application.conf
+```
+
+Check:
+
+```bash
+ls -l application.conf*
+```
+
+Verify:
+
+```bash
+grep 'connection.timeout' application.conf
+```
+
+Compare:
+
+```bash
+diff application.conf.bak application.conf
+```
+
+---
+
+# 🧑‍💻 PSA Real-Time Scenario 1 – Configuration Change
+
+## Requirement
+
+An approved change requires:
+
+```text
+connection.timeout=30
+```
+
+to become:
+
+```text
+connection.timeout=60
+```
+
+### Step 1: Confirm Server and User
+
+```bash
+hostname
+whoami
+pwd
+```
+
+---
+
+### Step 2: Check Current Value
+
+```bash
+grep -nF 'connection.timeout=' application.conf
+```
+
+---
+
+### Step 3: Preview the Change
+
+```bash
+sed 's/^connection\.timeout=30$/connection.timeout=60/' application.conf
+```
+
+Why use:
+
+```text
+^
+```
+
+and:
+
+```text
+$
+```
+
+Because they make the match more specific to the complete configuration line.
+
+---
+
+### Step 4: Create Backup if Required
+
+```bash
+cp -p application.conf application.conf.bak-20260708-1530
+```
+
+Verify:
+
+```bash
+ls -l application.conf*
+```
+
+---
+
+### Step 5: Perform the Approved Change
+
+Example on GNU `sed`:
+
+```bash
+sed -i 's/^connection\.timeout=30$/connection.timeout=60/' application.conf
+```
+
+---
+
+### Step 6: Verify
+
+```bash
+grep -nF 'connection.timeout=' application.conf
+```
+
+---
+
+### Step 7: Compare
+
+```bash
+diff application.conf.bak-20260708-1530 application.conf
+```
+
+---
+
+### Step 8: Validate
+
+If the application has a configuration validation command, run it.
+
+Then follow the approved reload or restart procedure only if required.
+
+---
+
+# 🧑‍💻 PSA Real-Time Scenario 2 – Filter Noisy Log Output
+
+Suppose a log contains thousands of INFO lines.
+
+You want a quick view without INFO lines:
+
+```bash
+sed '/INFO/d' application.log
+```
+
+For recent logs:
+
+```bash
+tail -n 500 application.log | sed '/INFO/d'
+```
+
+This is useful for a quick view, but do not assume INFO lines are useless.
+
+A transaction flow may look like:
+
+```text
+INFO Request received
+INFO Validation completed
+ERROR Database timeout
+INFO Retry started
+ERROR Retry failed
+```
+
+If you remove all INFO lines, you lose part of the sequence.
+
+For incident investigation, context matters.
+
+---
+
+# 🧑‍💻 PSA Real-Time Scenario 3 – Mask Sensitive Data in Diagnostic Copies
+
+Suppose a diagnostic file contains data like:
+
+```text
+card=1234567890123456
+```
+
+For a controlled lab example, you could transform the displayed output:
+
+```bash
+sed -E 's/card=[0-9]+/card=MASKED/g' diagnostic.log
+```
+
+Important:
+
+Do not treat a simple regex replacement as a complete security or compliance solution.
+
+Sensitive data can appear in:
+
+```text
+Different formats
+JSON fields
+URLs
+Headers
+Stack traces
+Encoded values
+Multiple files
+Archived logs
+```
+
+Follow your organization's data-handling and redaction procedures.
+
+---
+
+# 🧑‍💻 PSA Real-Time Scenario 4 – Extract an Incident Time Window
+
+Suppose the log has clear markers:
+
+```text
+INCIDENT_START
+...
+INCIDENT_END
+```
+
+Use:
+
+```bash
+sed -n '/INCIDENT_START/,/INCIDENT_END/p' application.log
+```
+
+This prints the complete range.
+
+If the end marker is missing, the output may continue to the end of the file.
+
+Always understand the data structure before using pattern ranges.
+
+---
+
+# 🧑‍💻 PSA Real-Time Scenario 5 – Remove Comments and Blank Lines
+
+Suppose a configuration file contains:
+
+```text
+# Database Configuration
+
+database.host=db01
+
+# Database Port
+database.port=3306
+```
+
+To display non-comment and non-empty lines:
+
+```bash
+sed -e '/^[[:space:]]*#/d' -e '/^[[:space:]]*$/d' application.conf
+```
+
+Output:
+
+```text
+database.host=db01
+database.port=3306
+```
+
+This can help review active-looking configuration lines.
+
+But be careful: configuration syntax differs between applications. Not every system uses `#` for comments.
+
+---
+
+# Common `sed` Mistakes
+
+## Mistake 1: Assuming Normal `sed` Modifies the File
+
+This:
+
+```bash
+sed 's/old/new/g' file.txt
+```
+
+does not normally modify the original file.
+
+It prints transformed output.
+
+To modify directly on supported implementations:
+
+```bash
+sed -i 's/old/new/g' file.txt
+```
+
+But do not use `-i` carelessly.
+
+---
+
+## Mistake 2: Running `sed -i` Without Preview
+
+Risky:
+
+```bash
+sed -i 's/30/60/g' application.conf
+```
+
+Why?
+
+It may change every `30` in the file.
+
+For example:
+
+```text
+timeout=30
+retry.delay=30
+port=3030
+cache.size=300
+```
+
+A broad pattern can change unintended content.
+
+Better:
+
+```bash
+sed 's/^connection\.timeout=30$/connection.timeout=60/' application.conf
+```
+
+Preview first.
+
+Then modify only after verification and approval.
+
+---
+
+## Mistake 3: Forgetting the `g` Flag
+
+Input:
+
+```text
+error error error
+```
+
+Command:
+
+```bash
+sed 's/error/issue/' file.txt
+```
+
+Output:
+
+```text
+issue error error
+```
+
+To replace all matches on the line:
+
+```bash
+sed 's/error/issue/g' file.txt
+```
+
+Output:
+
+```text
+issue issue issue
+```
+
+---
+
+## Mistake 4: Forgetting `-n` with `p`
+
+Command:
+
+```bash
+sed '5p' file.txt
+```
+
+may print line 5 twice.
+
+Use:
+
+```bash
+sed -n '5p' file.txt
+```
+
+---
+
+## Mistake 5: Using `/` for Paths Without Escaping
+
+Hard to read:
+
+```bash
+sed 's/\/opt\/app\/old/\/opt\/app\/new/' file.txt
+```
+
+Better:
+
+```bash
+sed 's#/opt/app/old#/opt/app/new#' file.txt
+```
+
+---
+
+## Mistake 6: Confusing `sed` with `grep`
+
+If you only need to find errors:
+
+```bash
+grep 'ERROR' application.log
+```
+
+is clearer than:
+
+```bash
+sed -n '/ERROR/p' application.log
+```
+
+Use `sed` when text transformation or stream editing is part of the task.
+
+---
+
+# 🎯 Interview Questions and Answers
+
+## Q1. What is `sed`?
+
+`sed` stands for Stream Editor.
+
+It is used to process and transform text streams and files.
+
+---
+
+## Q2. What is the basic syntax of `sed`?
+
+```bash
+sed [OPTIONS] 'COMMAND' FILE
+```
+
+---
+
+## Q3. How do you replace a word?
+
+```bash
+sed 's/old/new/' file.txt
+```
+
+This replaces the first matching occurrence on each selected line.
+
+---
+
+## Q4. How do you replace all occurrences on each line?
+
+```bash
+sed 's/old/new/g' file.txt
+```
+
+---
+
+## Q5. Does normal `sed` modify the original file?
+
+No.
+
+Example:
+
+```bash
+sed 's/old/new/g' file.txt
+```
+
+prints transformed output but does not normally modify the original file.
+
+---
+
+## Q6. How do you modify a file in place?
+
+On GNU `sed`:
+
+```bash
+sed -i 's/old/new/g' file.txt
+```
+
+Use carefully and understand operating-system differences.
+
+---
+
+## Q7. How do you create a backup while editing in place?
+
+On GNU `sed`:
+
+```bash
+sed -i.bak 's/old/new/g' file.txt
+```
+
+This creates a backup file with the `.bak` suffix.
+
+---
+
+## Q8. How do you print line 10?
+
+```bash
+sed -n '10p' file.txt
+```
+
+---
+
+## Q9. How do you print lines 10 to 20?
+
+```bash
+sed -n '10,20p' file.txt
+```
+
+---
+
+## Q10. How do you print the last line?
+
+```bash
+sed -n '$p' file.txt
+```
+
+---
+
+## Q11. How do you delete line 5?
+
+```bash
+sed '5d' file.txt
+```
+
+This removes it from the output unless in-place editing or redirection is used.
+
+---
+
+## Q12. How do you delete blank lines?
+
+```bash
+sed '/^$/d' file.txt
+```
+
+For whitespace-only lines:
+
+```bash
+sed '/^[[:space:]]*$/d' file.txt
+```
+
+---
+
+## Q13. How do you delete lines containing INFO?
+
+```bash
+sed '/INFO/d' application.log
+```
+
+---
+
+## Q14. How do you insert text before line 5?
+
+```bash
+sed '5i New Text' file.txt
+```
+
+---
+
+## Q15. How do you append text after line 5?
+
+```bash
+sed '5a New Text' file.txt
+```
+
+---
+
+## Q16. How do you replace a complete line?
+
+```bash
+sed '5c New Complete Line' file.txt
+```
+
+---
+
+## Q17. How do you replace text only on line 5?
+
+```bash
+sed '5s/old/new/g' file.txt
+```
+
+---
+
+## Q18. How do you replace text only on lines containing PAYMENT?
+
+```bash
+sed '/PAYMENT/s/old/new/g' file.txt
+```
+
+---
+
+## Q19. What is the purpose of `-n`?
+
+It suppresses normal automatic printing.
+
+It is commonly used with:
+
+```text
+p
+```
+
+Example:
+
+```bash
+sed -n '5p' file.txt
+```
+
+---
+
+## Q20. What is the difference between `grep` and `sed`?
+
+A strong answer:
+
+```text
+grep is mainly used to search and filter matching lines.
+
+sed is mainly used to transform and edit text streams.
+
+There is some overlap, but I normally use grep for searching and sed when I need substitution, deletion, insertion, or other stream-editing operations.
+```
+
+---
+
+## Q21. What is the difference between `sed` and `vi`?
+
+A strong answer:
+
+```text
+vi is an interactive text editor.
+
+sed is a non-interactive stream editor.
+
+I use vi when I need controlled manual editing and sed when I need repeatable text processing or transformation.
+```
+
+---
+
+## Q22. How would you safely use `sed` for a production configuration change?
+
+A strong answer:
+
+```text
+First, I verify the server, environment, user, and exact file path.
+
+Then I inspect the current value and check the number of matches.
+
+I preview the sed output without modifying the file.
+
+If the approved process requires a backup, I create and verify it.
+
+Then I perform the approved change, compare the old and new files, validate the configuration, perform an approved reload or restart if required, and verify application health.
+```
+
+---
+
+# 📌 Quick Revision
+
+```text
+sed 's/old/new/' file
+→ Replace first match on each line
+
+sed 's/old/new/g' file
+→ Replace all matches on each line
+
+sed -n '5p' file
+→ Print line 5
+
+sed -n '3,7p' file
+→ Print lines 3 to 7
+
+sed -n '$p' file
+→ Print last line
+
+sed '5d' file
+→ Delete line 5 from output
+
+sed '3,7d' file
+→ Delete lines 3 to 7 from output
+
+sed '/INFO/d' file
+→ Remove matching INFO lines from output
+
+sed '/^$/d' file
+→ Remove empty lines
+
+sed '5i text' file
+→ Insert before line 5
+
+sed '5a text' file
+→ Append after line 5
+
+sed '5c text' file
+→ Replace line 5
+
+sed '5s/old/new/' file
+→ Replace only on line 5
+
+sed '/PATTERN/s/old/new/' file
+→ Replace only on matching lines
+
+sed -n '/START/,/END/p' file
+→ Print between two patterns
+
+sed -E
+→ Use Extended Regular Expressions
+
+sed -e
+→ Add multiple commands
+
+sed -f script.sed
+→ Read sed commands from file
+
+sed -i
+→ Edit in place on supported implementations
+
+sed -i.bak
+→ Edit in place with backup on GNU sed
+```
+
+# Final Practice Challenge
+
+Create this file:
+
+```text
+application.conf
+```
+
+with:
+
+```text
+# Payment Application
+
+application.name=PaymentService
+server.port=8080
+
+database.host=localhost
+database.port=3306
+
+connection.timeout=30
+retry.count=3
+log.level=INFO
+```
+
+Complete these tasks:
+
+1. Print only line 3.
+2. Print lines 3 to 6.
+3. Print the last line.
+4. Remove blank lines from displayed output.
+5. Remove comment lines from displayed output.
+6. Replace `localhost` with `db01`.
+7. Replace `8080` with `9090`.
+8. Change `connection.timeout=30` to `connection.timeout=60`.
+9. Preview all changes without modifying the original file.
+10. Create a backup.
+11. Perform an in-place change in your lab environment.
+12. Compare the backup and modified file with `diff`.
+13. Print only lines containing `database`.
+14. Insert a heading before the first line.
+15. Append `healthcheck.enabled=true` after the last line.
+16. Explain the difference between `grep`, `sed`, and `vi`.
+
+For PSA work, remember this progression:
+
+```text
+grep
+↓
+Find the relevant text
+
+sed
+↓
+Transform text or automate a controlled text change
+
+vi
+↓
+Perform interactive manual editing when appropriate
+```
+
+The command itself is the easy part. The harder and more valuable skill is controlling the scope of the change. A weak command such as:
+
+```bash
+sed -i 's/30/60/g' application.conf
+```
+
+can change unrelated values.
+
+A precise command such as:
+
+```bash
+sed 's/^connection\.timeout=30$/connection.timeout=60/' application.conf
+```
+
+targets one specific configuration line.
+
+For Production Support, precision matters more than command speed.
