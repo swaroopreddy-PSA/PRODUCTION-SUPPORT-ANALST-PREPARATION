@@ -1,0 +1,2999 @@
+# 🐧 Linux AWK Command – Complete Beginner to PSA Guide
+
+## Introduction
+
+`awk` is a powerful Linux text-processing tool.
+
+It is mainly used to work with:
+
+* Rows
+* Columns
+* Fields
+* Records
+* Conditions
+* Numbers
+* Calculations
+* Reports
+* Log files
+* CSV-like files
+* Command output
+
+For a Production Support Analyst, `awk` is useful for tasks such as:
+
+```text
+Extracting columns from logs
+Checking CPU and memory values
+Reading process output
+Filtering employee or transaction records
+Calculating totals and averages
+Finding failed transactions
+Generating simple reports
+Analyzing delimited files
+Combining conditions with field values
+```
+
+---
+
+# 1. What is AWK?
+
+Think about a school marks table:
+
+```text
+ID   NAME   SUBJECT   MARKS
+
+101  Ravi   Maths     80
+102  Sita   Maths     95
+103  Raju   Maths     60
+```
+
+Suppose you want only the student names:
+
+```text
+Ravi
+Sita
+Raju
+```
+
+You can use:
+
+```bash
+awk '{print $2}' marks.txt
+```
+
+Suppose you want only marks:
+
+```bash
+awk '{print $4}' marks.txt
+```
+
+Simple meaning:
+
+```text
+Read one line
+     ↓
+Divide the line into fields
+     ↓
+Check conditions if any
+     ↓
+Perform an action
+     ↓
+Move to the next line
+```
+
+---
+
+# 2. Why is the Command Called AWK?
+
+The name comes from the surnames of its original designers:
+
+```text
+Aho
+Weinberger
+Kernighan
+```
+
+Therefore:
+
+```text
+A + W + K = AWK
+```
+
+---
+
+# 3. Basic AWK Syntax
+
+```bash
+awk 'pattern { action }' file
+```
+
+Simple example:
+
+```bash
+awk '{print $1}' employees.txt
+```
+
+Here:
+
+```text
+awk
+→ Program
+
+'{print $1}'
+→ AWK instruction
+
+employees.txt
+→ Input file
+```
+
+---
+
+# 4. Create a Practice File
+
+Create:
+
+```bash
+cat > employees.txt
+```
+
+Enter:
+
+```text
+101 Ravi Support Hyderabad 45000
+102 Sita Developer Chennai 70000
+103 Raju Support Hyderabad 50000
+104 Anu Tester Bangalore 55000
+105 Kiran Developer Hyderabad 80000
+106 Priya Support Chennai 48000
+107 Arun Tester Hyderabad 60000
+108 Meena Developer Bangalore 75000
+109 Rakesh Support Hyderabad 52000
+110 Kavya Tester Chennai 58000
+```
+
+Press:
+
+```text
+Ctrl + D
+```
+
+Check:
+
+```bash
+cat employees.txt
+```
+
+The columns are:
+
+```text
+$1 → Employee ID
+$2 → Employee Name
+$3 → Role
+$4 → Location
+$5 → Salary
+```
+
+---
+
+# 5. Understanding Fields
+
+AWK divides each input line into fields.
+
+Example:
+
+```text
+101 Ravi Support Hyderabad 45000
+```
+
+AWK sees:
+
+```text
+$1 = 101
+
+$2 = Ravi
+
+$3 = Support
+
+$4 = Hyderabad
+
+$5 = 45000
+```
+
+The complete line is:
+
+```text
+$0
+```
+
+This is one of the most important AWK concepts.
+
+---
+
+# 6. Print the Complete Line
+
+Use:
+
+```bash
+awk '{print $0}' employees.txt
+```
+
+This prints every complete input record.
+
+For simple display, this is similar to:
+
+```bash
+cat employees.txt
+```
+
+But `awk` becomes useful when you add field selection, conditions, calculations, or formatting.
+
+---
+
+# 7. Print the First Column
+
+```bash
+awk '{print $1}' employees.txt
+```
+
+Output:
+
+```text
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+```
+
+---
+
+# 8. Print the Second Column
+
+```bash
+awk '{print $2}' employees.txt
+```
+
+Output:
+
+```text
+Ravi
+Sita
+Raju
+Anu
+Kiran
+Priya
+Arun
+Meena
+Rakesh
+Kavya
+```
+
+---
+
+# 9. Print Multiple Columns
+
+Print employee name and salary:
+
+```bash
+awk '{print $2, $5}' employees.txt
+```
+
+Output:
+
+```text
+Ravi 45000
+Sita 70000
+Raju 50000
+Anu 55000
+Kiran 80000
+Priya 48000
+Arun 60000
+Meena 75000
+Rakesh 52000
+Kavya 58000
+```
+
+---
+
+# 10. Print Columns with Labels
+
+```bash
+awk '{print "Name:", $2, "Salary:", $5}' employees.txt
+```
+
+Example output:
+
+```text
+Name: Ravi Salary: 45000
+Name: Sita Salary: 70000
+Name: Raju Salary: 50000
+```
+
+This is useful for creating simple readable reports.
+
+---
+
+# 11. `$0` vs `$1` vs `$2`
+
+Suppose the line is:
+
+```text
+101 Ravi Support Hyderabad 45000
+```
+
+Then:
+
+```text
+$0
+→ 101 Ravi Support Hyderabad 45000
+
+$1
+→ 101
+
+$2
+→ Ravi
+
+$3
+→ Support
+
+$4
+→ Hyderabad
+
+$5
+→ 45000
+```
+
+Quick rule:
+
+```text
+$0 = Complete line
+
+$1 = First field
+
+$2 = Second field
+
+$3 = Third field
+
+...
+
+$NF = Last field
+```
+
+---
+
+# 12. What is `NF`?
+
+`NF` means:
+
+```text
+Number of Fields
+```
+
+Example:
+
+```bash
+awk '{print NF}' employees.txt
+```
+
+Each line in our file has 5 fields, so output is:
+
+```text
+5
+5
+5
+5
+5
+5
+5
+5
+5
+5
+```
+
+---
+
+# 13. Print the Last Field
+
+Use:
+
+```bash
+awk '{print $NF}' employees.txt
+```
+
+Output:
+
+```text
+45000
+70000
+50000
+55000
+80000
+48000
+60000
+75000
+52000
+58000
+```
+
+Why?
+
+Because:
+
+```text
+NF
+→ Number of fields
+
+$NF
+→ Value of the last field
+```
+
+---
+
+# 14. Print the Second Last Field
+
+Use:
+
+```bash
+awk '{print $(NF-1)}' employees.txt
+```
+
+Output:
+
+```text
+Hyderabad
+Chennai
+Hyderabad
+Bangalore
+Hyderabad
+Chennai
+Hyderabad
+Bangalore
+Hyderabad
+Chennai
+```
+
+---
+
+# 15. What is `NR`?
+
+`NR` means:
+
+```text
+Number of Records processed so far
+```
+
+For normal line-based input, think of it as the current overall line number.
+
+Use:
+
+```bash
+awk '{print NR, $0}' employees.txt
+```
+
+Output:
+
+```text
+1 101 Ravi Support Hyderabad 45000
+2 102 Sita Developer Chennai 70000
+3 103 Raju Support Hyderabad 50000
+...
+```
+
+---
+
+# 16. Print a Specific Line Using NR
+
+Print line 5:
+
+```bash
+awk 'NR==5 {print $0}' employees.txt
+```
+
+Shorter:
+
+```bash
+awk 'NR==5' employees.txt
+```
+
+Why does the shorter form work?
+
+In AWK, if a pattern matches and no action is given, the default action is:
+
+```text
+print $0
+```
+
+---
+
+# 17. Print a Range of Lines
+
+Print lines 3 to 7:
+
+```bash
+awk 'NR>=3 && NR<=7 {print}' employees.txt
+```
+
+Output contains lines 3, 4, 5, 6, and 7.
+
+---
+
+# 18. `NR` vs `FNR`
+
+This is an important interview topic.
+
+## NR
+
+```text
+NR
+→ Total record count across all input files
+```
+
+## FNR
+
+```text
+FNR
+→ Record count inside the current input file
+```
+
+Example:
+
+```bash
+awk '{print NR, FNR, $0}' file1.txt file2.txt
+```
+
+Suppose each file has 3 lines.
+
+Possible output:
+
+```text
+1 1 first-file-line-1
+2 2 first-file-line-2
+3 3 first-file-line-3
+4 1 second-file-line-1
+5 2 second-file-line-2
+6 3 second-file-line-3
+```
+
+Notice:
+
+```text
+NR continues counting.
+
+FNR resets when a new file starts.
+```
+
+---
+
+# 19. Filter Records Using Text Conditions
+
+Print employees whose role is `Support`:
+
+```bash
+awk '$3=="Support" {print}' employees.txt
+```
+
+Output:
+
+```text
+101 Ravi Support Hyderabad 45000
+103 Raju Support Hyderabad 50000
+106 Priya Support Chennai 48000
+109 Rakesh Support Hyderabad 52000
+```
+
+---
+
+# 20. Filter by Location
+
+Print employees from Hyderabad:
+
+```bash
+awk '$4=="Hyderabad" {print}' employees.txt
+```
+
+---
+
+# 21. Filter Numeric Values
+
+Print employees with salary greater than 50000:
+
+```bash
+awk '$5>50000 {print}' employees.txt
+```
+
+---
+
+# 22. Greater Than or Equal To
+
+```bash
+awk '$5>=60000 {print}' employees.txt
+```
+
+---
+
+# 23. Less Than
+
+```bash
+awk '$5<50000 {print}' employees.txt
+```
+
+---
+
+# 24. Equal To
+
+```bash
+awk '$5==50000 {print}' employees.txt
+```
+
+Important:
+
+```text
+=
+→ Assignment
+
+==
+→ Comparison
+```
+
+Do not confuse them.
+
+---
+
+# 25. Not Equal To
+
+```bash
+awk '$3!="Support" {print}' employees.txt
+```
+
+This prints employees whose role is not `Support`.
+
+---
+
+# 26. AWK Comparison Operators
+
+| Operator | Meaning                  |
+| -------- | ------------------------ |
+| `==`     | Equal to                 |
+| `!=`     | Not equal to             |
+| `>`      | Greater than             |
+| `<`      | Less than                |
+| `>=`     | Greater than or equal to |
+| `<=`     | Less than or equal to    |
+
+---
+
+# 27. Multiple Conditions with AND
+
+Use:
+
+```text
+&&
+```
+
+Example:
+
+```bash
+awk '$3=="Support" && $4=="Hyderabad" {print}' employees.txt
+```
+
+Meaning:
+
+```text
+Role must be Support
+
+AND
+
+Location must be Hyderabad
+```
+
+Both conditions must be true.
+
+---
+
+# 28. Multiple Conditions with OR
+
+Use:
+
+```text
+||
+```
+
+Example:
+
+```bash
+awk '$4=="Hyderabad" || $4=="Chennai" {print}' employees.txt
+```
+
+Meaning:
+
+```text
+Hyderabad
+
+OR
+
+Chennai
+```
+
+At least one condition must be true.
+
+---
+
+# 29. NOT Operator
+
+Use:
+
+```text
+!
+```
+
+Example:
+
+```bash
+awk '!($3=="Support") {print}' employees.txt
+```
+
+A clearer form for this specific case is:
+
+```bash
+awk '$3!="Support" {print}' employees.txt
+```
+
+---
+
+# 30. Search by Pattern
+
+Print lines containing `Support`:
+
+```bash
+awk '/Support/ {print}' employees.txt
+```
+
+Short form:
+
+```bash
+awk '/Support/' employees.txt
+```
+
+This searches the complete record.
+
+---
+
+# 31. Pattern Not Matching
+
+```bash
+awk '!/Support/' employees.txt
+```
+
+This prints lines that do not contain `Support`.
+
+---
+
+# 32. Match a Pattern in a Specific Field
+
+Use:
+
+```bash
+awk '$3 ~ /Support/ {print}' employees.txt
+```
+
+Here:
+
+```text
+~
+→ Matches regular expression
+```
+
+---
+
+# 33. Field Does Not Match Pattern
+
+Use:
+
+```bash
+awk '$3 !~ /Support/ {print}' employees.txt
+```
+
+Here:
+
+```text
+!~
+→ Does not match regular expression
+```
+
+---
+
+# 34. AWK Pattern Matching Operators
+
+| Operator | Meaning              |
+| -------- | -------------------- |
+| `~`      | Matches regex        |
+| `!~`     | Does not match regex |
+
+Example:
+
+```bash
+awk '$2 ~ /^R/ {print}' employees.txt
+```
+
+This prints records where the second field starts with `R`.
+
+---
+
+# 35. Field Separator
+
+By default, AWK separates fields using runs of whitespace.
+
+But files may use other delimiters.
+
+Examples:
+
+```text
+:
+,
+|
+;
+```
+
+AWK can handle these using:
+
+```text
+-F
+```
+
+---
+
+# 36. Colon-Separated File
+
+Example:
+
+```text
+101:Ravi:Support:Hyderabad
+102:Sita:Developer:Chennai
+103:Raju:Support:Hyderabad
+```
+
+Print names:
+
+```bash
+awk -F: '{print $2}' employees-colon.txt
+```
+
+---
+
+# 37. Comma-Separated File
+
+Example:
+
+```text
+101,Ravi,Support,Hyderabad,45000
+102,Sita,Developer,Chennai,70000
+103,Raju,Support,Hyderabad,50000
+```
+
+Use:
+
+```bash
+awk -F, '{print $2, $5}' employees.csv
+```
+
+Important:
+
+This works for simple comma-separated text.
+
+Real CSV files can contain:
+
+```text
+Quoted commas
+Escaped quotes
+Multiline fields
+```
+
+For complex CSV, use a proper CSV-aware parser instead of assuming `-F,` is sufficient.
+
+---
+
+# 38. Pipe-Separated File
+
+Example:
+
+```text
+101|Ravi|Support|Hyderabad|45000
+```
+
+Use:
+
+```bash
+awk -F'|' '{print $2, $5}' employees.txt
+```
+
+---
+
+# 39. Set FS Inside AWK
+
+`FS` means:
+
+```text
+Field Separator
+```
+
+Example:
+
+```bash
+awk 'BEGIN {FS=":"} {print $2}' employees.txt
+```
+
+This is similar to:
+
+```bash
+awk -F: '{print $2}' employees.txt
+```
+
+---
+
+# 40. What is BEGIN?
+
+`BEGIN` runs before AWK reads the input records.
+
+Example:
+
+```bash
+awk 'BEGIN {print "Employee Report"} {print $2, $5}' employees.txt
+```
+
+Output starts with:
+
+```text
+Employee Report
+```
+
+Then AWK processes the file.
+
+Simple flow:
+
+```text
+BEGIN
+   ↓
+Process input records
+   ↓
+END
+```
+
+---
+
+# 41. What is END?
+
+`END` runs after all input records have been processed.
+
+Example:
+
+```bash
+awk '{count++} END {print "Total Records:", count}' employees.txt
+```
+
+Output:
+
+```text
+Total Records: 10
+```
+
+---
+
+# 42. BEGIN and END Together
+
+```bash
+awk '
+BEGIN {
+    print "EMPLOYEE REPORT"
+}
+{
+    print $2, $3, $5
+}
+END {
+    print "REPORT COMPLETED"
+}
+' employees.txt
+```
+
+This gives:
+
+```text
+Header
+Data
+Footer
+```
+
+---
+
+# 43. Count Records
+
+Use:
+
+```bash
+awk 'END {print NR}' employees.txt
+```
+
+For one file, this prints the number of records processed.
+
+You could also use:
+
+```bash
+wc -l employees.txt
+```
+
+The correct tool depends on what else you need to calculate.
+
+---
+
+# 44. Count Matching Records
+
+Count Support employees:
+
+```bash
+awk '$3=="Support" {count++} END {print count}' employees.txt
+```
+
+Better labeled output:
+
+```bash
+awk '$3=="Support" {count++} END {print "Support Employees:", count+0}' employees.txt
+```
+
+Why `count+0`?
+
+If there are no matches, an uninitialized AWK variable may print as an empty string in some contexts.
+
+Adding zero forces numeric output.
+
+---
+
+# 45. Calculate Total Salary
+
+```bash
+awk '{sum += $5} END {print "Total Salary:", sum}' employees.txt
+```
+
+How it works:
+
+```text
+Line 1 salary
+    ↓
+Add to sum
+
+Line 2 salary
+    ↓
+Add to sum
+
+Continue...
+
+END
+    ↓
+Print total
+```
+
+---
+
+# 46. Calculate Average
+
+```bash
+awk '{sum += $5} END {print "Average Salary:", sum/NR}' employees.txt
+```
+
+Safer version:
+
+```bash
+awk '
+{
+    sum += $5
+}
+END {
+    if (NR > 0)
+        print "Average Salary:", sum/NR
+    else
+        print "No records"
+}
+' employees.txt
+```
+
+This avoids division by zero for empty input.
+
+---
+
+# 47. Find Maximum Value
+
+```bash
+awk '
+NR==1 {
+    max=$5
+    name=$2
+}
+$5>max {
+    max=$5
+    name=$2
+}
+END {
+    print name, max
+}
+' employees.txt
+```
+
+This prints the employee with the highest salary.
+
+Why initialize with the first record?
+
+Because assuming:
+
+```text
+max=0
+```
+
+can be wrong when data can contain negative values.
+
+---
+
+# 48. Find Minimum Value
+
+```bash
+awk '
+NR==1 {
+    min=$5
+    name=$2
+}
+$5<min {
+    min=$5
+    name=$2
+}
+END {
+    print name, min
+}
+' employees.txt
+```
+
+---
+
+# 49. Arithmetic Operations
+
+Suppose:
+
+```text
+Product Price Quantity
+Laptop 50000 2
+Mouse 500 5
+Keyboard 1500 3
+```
+
+Calculate total per row:
+
+```bash
+awk '{print $1, $2*$3}' products.txt
+```
+
+Example output:
+
+```text
+Laptop 100000
+Mouse 2500
+Keyboard 4500
+```
+
+---
+
+# 50. AWK Arithmetic Operators
+
+| Operator | Meaning        |
+| -------- | -------------- |
+| `+`      | Addition       |
+| `-`      | Subtraction    |
+| `*`      | Multiplication |
+| `/`      | Division       |
+| `%`      | Modulus        |
+| `^`      | Exponentiation |
+
+Example:
+
+```bash
+awk 'BEGIN {print 10+5}'
+```
+
+Output:
+
+```text
+15
+```
+
+---
+
+# 51. AWK Variables
+
+You can create your own variables.
+
+Example:
+
+```bash
+awk '
+{
+    total = total + $5
+}
+END {
+    print total
+}
+' employees.txt
+```
+
+Short form:
+
+```bash
+awk '{total += $5} END {print total}' employees.txt
+```
+
+---
+
+# 52. Pass a Shell Value to AWK with `-v`
+
+Suppose:
+
+```bash
+limit=60000
+```
+
+Use:
+
+```bash
+awk -v min="$limit" '$5>=min {print}' employees.txt
+```
+
+This safely passes a shell variable value into an AWK variable.
+
+This is clearer than building AWK code by complicated shell quoting.
+
+---
+
+# 53. Output Field Separator
+
+`OFS` means:
+
+```text
+Output Field Separator
+```
+
+Example:
+
+```bash
+awk 'BEGIN {OFS=" | "} {print $1,$2,$3}' employees.txt
+```
+
+Output:
+
+```text
+101 | Ravi | Support
+102 | Sita | Developer
+103 | Raju | Support
+```
+
+---
+
+# 54. ORS – Output Record Separator
+
+`ORS` means:
+
+```text
+Output Record Separator
+```
+
+Default:
+
+```text
+Newline
+```
+
+Example:
+
+```bash
+awk 'BEGIN {ORS=", "} {print $2}' employees.txt
+```
+
+Possible output:
+
+```text
+Ravi, Sita, Raju, Anu, Kiran, Priya, Arun, Meena, Rakesh, Kavya,
+```
+
+This example leaves a trailing separator.
+
+For polished output, you may need more careful formatting.
+
+---
+
+# 55. RS – Record Separator
+
+`RS` means:
+
+```text
+Input Record Separator
+```
+
+Normally, AWK treats each line as one record.
+
+Advanced AWK programs can change `RS` to process records separated by another pattern or character.
+
+For PSA beginner preparation, understand the concept first:
+
+```text
+FS
+→ Separates fields
+
+RS
+→ Separates input records
+
+OFS
+→ Separates printed fields
+
+ORS
+→ Separates output records
+```
+
+---
+
+# 56. Built-In Variables Summary
+
+| Variable   | Meaning                       |
+| ---------- | ----------------------------- |
+| `NR`       | Overall record number         |
+| `FNR`      | Record number in current file |
+| `NF`       | Number of fields              |
+| `FS`       | Input field separator         |
+| `OFS`      | Output field separator        |
+| `RS`       | Input record separator        |
+| `ORS`      | Output record separator       |
+| `FILENAME` | Current input filename        |
+
+---
+
+# 57. Print Filename
+
+```bash
+awk '{print FILENAME, $0}' employees.txt
+```
+
+This is useful when processing multiple files.
+
+---
+
+# 58. Formatted Output with `printf`
+
+`print` is simple.
+
+`printf` gives more control.
+
+Example:
+
+```bash
+awk '{printf "%-10s %-12s %10d\n", $2, $3, $5}' employees.txt
+```
+
+Possible output:
+
+```text
+Ravi       Support           45000
+Sita       Developer         70000
+Raju       Support           50000
+```
+
+---
+
+# 59. `print` vs `printf`
+
+## `print`
+
+```bash
+awk '{print $2, $5}' employees.txt
+```
+
+Simple and automatic.
+
+## `printf`
+
+```bash
+awk '{printf "%-10s %10d\n", $2, $5}' employees.txt
+```
+
+Better for formatted reports.
+
+Important:
+
+`printf` does not automatically add a newline.
+
+You normally include:
+
+```text
+\n
+```
+
+---
+
+# 60. Common `printf` Formats
+
+| Format | Meaning                                     |
+| ------ | ------------------------------------------- |
+| `%s`   | String                                      |
+| `%d`   | Integer                                     |
+| `%f`   | Floating-point number                       |
+| `%.2f` | Floating-point number with 2 decimal places |
+| `\n`   | New line                                    |
+| `\t`   | Tab                                         |
+
+Example:
+
+```bash
+awk '{printf "%s %.2f\n", $2, $5}' employees.txt
+```
+
+---
+
+# 61. AWK `if` Statement
+
+Example:
+
+```bash
+awk '
+{
+    if ($5 >= 60000)
+        print $2, "High Salary"
+    else
+        print $2, "Regular Salary"
+}
+' employees.txt
+```
+
+---
+
+# 62. Multiple Conditions with `if`
+
+```bash
+awk '
+{
+    if ($5 >= 70000)
+        print $2, "Grade A"
+    else if ($5 >= 50000)
+        print $2, "Grade B"
+    else
+        print $2, "Grade C"
+}
+' employees.txt
+```
+
+---
+
+# 63. AWK Arrays
+
+AWK supports associative arrays.
+
+Suppose you want to count employees by role:
+
+```bash
+awk '
+{
+    count[$3]++
+}
+END {
+    for (role in count)
+        print role, count[role]
+}
+' employees.txt
+```
+
+Possible output:
+
+```text
+Support 4
+Developer 3
+Tester 3
+```
+
+Important:
+
+The order of associative-array output is not guaranteed.
+
+If you need sorted output, pipe it to `sort`:
+
+```bash
+awk '{count[$3]++} END {for (role in count) print role, count[role]}' employees.txt | sort
+```
+
+---
+
+# 64. Count by Location
+
+```bash
+awk '
+{
+    count[$4]++
+}
+END {
+    for (location in count)
+        print location, count[location]
+}
+' employees.txt
+```
+
+---
+
+# 65. Sum by Role
+
+```bash
+awk '
+{
+    total[$3] += $5
+}
+END {
+    for (role in total)
+        print role, total[role]
+}
+' employees.txt
+```
+
+This calculates total salary grouped by role.
+
+The same idea is useful for:
+
+```text
+Error count by service
+Transaction count by status
+Requests by endpoint
+Incidents by priority
+Jobs by status
+```
+
+---
+
+# 66. Average by Role
+
+```bash
+awk '
+{
+    total[$3] += $5
+    count[$3]++
+}
+END {
+    for (role in total)
+        print role, total[role]/count[role]
+}
+' employees.txt
+```
+
+---
+
+# 67. AWK String Functions
+
+Useful string functions include:
+
+```text
+length()
+tolower()
+toupper()
+substr()
+index()
+split()
+```
+
+---
+
+# 68. `length()`
+
+Print name and name length:
+
+```bash
+awk '{print $2, length($2)}' employees.txt
+```
+
+Example:
+
+```text
+Ravi 4
+Sita 4
+Rakesh 6
+```
+
+---
+
+# 69. `toupper()`
+
+```bash
+awk '{print toupper($2)}' employees.txt
+```
+
+Output:
+
+```text
+RAVI
+SITA
+RAJU
+...
+```
+
+---
+
+# 70. `tolower()`
+
+```bash
+awk '{print tolower($3)}' employees.txt
+```
+
+Output:
+
+```text
+support
+developer
+support
+tester
+...
+```
+
+---
+
+# 71. `substr()`
+
+Syntax:
+
+```text
+substr(string, start, length)
+```
+
+Example:
+
+```bash
+awk '{print substr($2,1,3)}' employees.txt
+```
+
+For:
+
+```text
+Rakesh
+```
+
+output is:
+
+```text
+Rak
+```
+
+---
+
+# 72. `index()`
+
+Example:
+
+```bash
+awk '{print $0, index($0,"Support")}' employees.txt
+```
+
+`index()` returns the position of the substring, or 0 when it is not found.
+
+---
+
+# 73. `split()`
+
+Example:
+
+```bash
+awk '
+BEGIN {
+    text="Linux,SQL,Splunk"
+    n=split(text, tools, ",")
+    for (i=1; i<=n; i++)
+        print tools[i]
+}
+'
+```
+
+Output:
+
+```text
+Linux
+SQL
+Splunk
+```
+
+---
+
+# 74. AWK with Pipes
+
+AWK becomes powerful when combined with Linux commands.
+
+---
+
+# AWK with `ps`
+
+Example:
+
+```bash
+ps -ef | awk '{print $1, $2, $8}'
+```
+
+This prints selected fields from process output.
+
+But be careful:
+
+The exact meaning of fields depends on the command output format.
+
+Always inspect:
+
+```bash
+ps -ef
+```
+
+before assuming field positions.
+
+---
+
+# AWK with `df`
+
+Check filesystem usage:
+
+```bash
+df -P | awk 'NR>1 {print $5, $6}'
+```
+
+Possible output:
+
+```text
+40% /
+72% /data
+85% /logs
+```
+
+Why `df -P`?
+
+It requests a more predictable POSIX-style one-line-per-filesystem output format, which is easier to parse.
+
+---
+
+# 75. Find Filesystems Above a Threshold
+
+Example:
+
+```bash
+df -P | awk '
+NR>1 {
+    usage=$5
+    gsub(/%/, "", usage)
+
+    if (usage >= 80)
+        print "HIGH USAGE:", $6, usage "%"
+}
+'
+```
+
+Possible output:
+
+```text
+HIGH USAGE: /logs 85%
+```
+
+Important:
+
+This is a useful learning example, but production monitoring should account for the operating system, filesystem type, pseudo-filesystems, mount naming, and monitoring standards.
+
+---
+
+# 76. AWK with `free`
+
+Example:
+
+```bash
+free -m
+```
+
+Inspect the output first.
+
+Then you might extract fields such as:
+
+```bash
+free -m | awk '/^Mem:/ {print "Total:", $2, "Used:", $3, "Available:", $7}'
+```
+
+Field positions can vary by tool version and operating system.
+
+Do not memorize a parsing command without checking actual output.
+
+---
+
+# 77. AWK with Logs
+
+Suppose:
+
+```text
+2026-07-08 10:00:01 INFO PaymentService started
+2026-07-08 10:01:10 ERROR PaymentService timeout
+2026-07-08 10:02:20 WARN DatabaseService slow
+```
+
+If whitespace is the separator:
+
+```bash
+awk '{print $1, $2, $3, $4}' application.log
+```
+
+But real logs can contain variable message text, JSON, tabs, or custom delimiters.
+
+Understand the log format before assuming field numbers.
+
+---
+
+# 78. Filter ERROR Records
+
+```bash
+awk '$3=="ERROR" {print}' application.log
+```
+
+This works only if the third field really is the log level.
+
+Check first:
+
+```bash
+head application.log
+```
+
+---
+
+# 79. Count Errors
+
+```bash
+awk '$3=="ERROR" {count++} END {print "Errors:", count+0}' application.log
+```
+
+---
+
+# 80. Count Log Levels
+
+```bash
+awk '
+{
+    count[$3]++
+}
+END {
+    for (level in count)
+        print level, count[level]
+}
+' application.log
+```
+
+Possible output:
+
+```text
+INFO 1000
+WARN 50
+ERROR 20
+CRITICAL 2
+```
+
+Again, this assumes field 3 is the log level.
+
+---
+
+# 81. AWK with Transaction Data
+
+Create:
+
+```text
+TXN1001 SUCCESS 5000
+TXN1002 FAILED 3000
+TXN1003 SUCCESS 7000
+TXN1004 FAILED 2500
+TXN1005 SUCCESS 10000
+```
+
+Print failed transactions:
+
+```bash
+awk '$2=="FAILED" {print}' transactions.txt
+```
+
+Count failures:
+
+```bash
+awk '$2=="FAILED" {count++} END {print count+0}' transactions.txt
+```
+
+Total successful transaction amount:
+
+```bash
+awk '$2=="SUCCESS" {sum += $3} END {print sum+0}' transactions.txt
+```
+
+---
+
+# 82. PSA Scenario – Payment Failure Analysis
+
+Suppose a transaction file contains:
+
+```text
+2026-07-08 TXN1001 SUCCESS 5000
+2026-07-08 TXN1002 FAILED 3000
+2026-07-08 TXN1003 FAILED 7000
+2026-07-08 TXN1004 SUCCESS 2500
+```
+
+Count failed records:
+
+```bash
+awk '$3=="FAILED" {count++} END {print "Failed Records:", count+0}' transactions.txt
+```
+
+Output:
+
+```text
+Failed Records: 2
+```
+
+Print failed transaction IDs:
+
+```bash
+awk '$3=="FAILED" {print $2}' transactions.txt
+```
+
+Output:
+
+```text
+TXN1002
+TXN1003
+```
+
+Calculate failed amount:
+
+```bash
+awk '$3=="FAILED" {sum += $4} END {print "Failed Amount:", sum+0}' transactions.txt
+```
+
+Important:
+
+A PSA should not assume every `FAILED` record represents a final business loss.
+
+A transaction may later be:
+
+```text
+Retried
+Reversed
+Reconciled
+Compensated
+Marked duplicate
+Completed asynchronously
+```
+
+Technical status and final business outcome are not always the same.
+
+---
+
+# 83. PSA Scenario – Disk Usage Investigation
+
+Check:
+
+```bash
+df -P
+```
+
+Then:
+
+```bash
+df -P | awk '
+NR>1 {
+    usage=$5
+    gsub(/%/, "", usage)
+
+    if (usage >= 80)
+        print $6, usage "%"
+}
+'
+```
+
+This identifies mount points meeting the threshold.
+
+But do not jump directly to:
+
+```bash
+rm -rf ...
+```
+
+A correct PSA workflow is:
+
+```text
+Identify high-usage filesystem
+        ↓
+Identify large directories
+        ↓
+Identify large files
+        ↓
+Check whether files are active
+        ↓
+Check retention and ownership
+        ↓
+Follow approved cleanup procedure
+        ↓
+Verify disk recovery
+        ↓
+Validate application health
+```
+
+---
+
+# 84. PSA Scenario – Error Count by Service
+
+Suppose:
+
+```text
+PaymentService ERROR timeout
+PaymentService ERROR connection_failed
+UserService INFO login_success
+DatabaseService ERROR connection_refused
+PaymentService WARN retry
+DatabaseService ERROR timeout
+```
+
+Count errors by service:
+
+```bash
+awk '
+$2=="ERROR" {
+    count[$1]++
+}
+END {
+    for (service in count)
+        print service, count[service]
+}
+' application.log
+```
+
+Possible output:
+
+```text
+DatabaseService 2
+PaymentService 2
+```
+
+This helps identify which service is generating the most error records.
+
+---
+
+# 85. PSA Scenario – Batch Job Report
+
+Suppose:
+
+```text
+JOB001 SUCCESS 120
+JOB002 FAILED 30
+JOB003 SUCCESS 300
+JOB004 RUNNING 500
+JOB005 FAILED 45
+```
+
+Print failed jobs:
+
+```bash
+awk '$2=="FAILED" {print $1}' jobs.txt
+```
+
+Count by status:
+
+```bash
+awk '
+{
+    status[$2]++
+}
+END {
+    for (s in status)
+        print s, status[s]
+}
+' jobs.txt
+```
+
+Find jobs running longer than 400 seconds:
+
+```bash
+awk '$2=="RUNNING" && $3>400 {print}' jobs.txt
+```
+
+This kind of logic is relevant to batch monitoring.
+
+---
+
+# 86. AWK Program File
+
+For longer AWK programs, create a file.
+
+Example:
+
+```bash
+cat > report.awk
+```
+
+Enter:
+
+```text
+BEGIN {
+    print "EMPLOYEE REPORT"
+}
+
+{
+    total += $5
+    count++
+}
+
+END {
+    print "Employees:", count
+    print "Total Salary:", total
+
+    if (count > 0)
+        print "Average Salary:", total/count
+}
+```
+
+Press:
+
+```text
+Ctrl + D
+```
+
+Run:
+
+```bash
+awk -f report.awk employees.txt
+```
+
+This is cleaner than putting a large AWK program on one command line.
+
+---
+
+# 87. AWK vs GREP vs SED
+
+This is an important interview comparison.
+
+| Tool   | Main Strength                                                 |
+| ------ | ------------------------------------------------------------- |
+| `grep` | Search and filter matching lines                              |
+| `sed`  | Transform and edit text streams                               |
+| `awk`  | Field-based processing, conditions, calculations, and reports |
+
+Example file:
+
+```text
+101 Ravi Support 45000
+102 Sita Developer 70000
+```
+
+Find Support:
+
+```bash
+grep 'Support' employees.txt
+```
+
+Replace Support with PSA:
+
+```bash
+sed 's/Support/PSA/g' employees.txt
+```
+
+Print name and salary:
+
+```bash
+awk '{print $2, $4}' employees.txt
+```
+
+Simple memory rule:
+
+```text
+grep
+→ Find
+
+sed
+→ Change
+
+awk
+→ Analyze fields and calculate
+```
+
+This is simplified, but useful for beginners.
+
+---
+
+# 88. AWK vs CUT
+
+Suppose fields are always fixed and simple.
+
+Example:
+
+```text
+101:Ravi:Support:Hyderabad
+```
+
+Using `cut`:
+
+```bash
+cut -d: -f2 employees.txt
+```
+
+Using `awk`:
+
+```bash
+awk -F: '{print $2}' employees.txt
+```
+
+`cut` is simple for fixed delimiter-based field extraction.
+
+`awk` is better when you need:
+
+```text
+Conditions
+Calculations
+Multiple actions
+Grouping
+Formatting
+Regex logic
+Variables
+Reports
+```
+
+Use the simplest tool that solves the task clearly.
+
+---
+
+# 89. Common AWK Mistakes
+
+## Mistake 1: Assuming Field Positions
+
+Suppose you write:
+
+```bash
+awk '$3=="ERROR" {print}' application.log
+```
+
+This is only correct if field 3 is actually the log level.
+
+Always inspect:
+
+```bash
+head application.log
+```
+
+before writing field-based logic.
+
+---
+
+## Mistake 2: Using AWK for Complex CSV
+
+This:
+
+```bash
+awk -F, '{print $2}' file.csv
+```
+
+works for simple comma-separated data.
+
+But consider:
+
+```text
+101,"Ravi Reddy","Hyderabad, Telangana",50000
+```
+
+Simple `-F,` parsing does not understand CSV quoting rules.
+
+Use a CSV-aware parser for complex CSV files.
+
+---
+
+## Mistake 3: Confusing `=` and `==`
+
+Wrong condition:
+
+```text
+$3="FAILED"
+```
+
+This is assignment.
+
+Comparison is:
+
+```text
+$3=="FAILED"
+```
+
+---
+
+## Mistake 4: Dividing by Zero
+
+Risky:
+
+```bash
+awk '{sum+=$5} END {print sum/NR}' empty.txt
+```
+
+Safer:
+
+```bash
+awk '
+{
+    sum += $5
+}
+END {
+    if (NR > 0)
+        print sum/NR
+    else
+        print "No records"
+}
+' empty.txt
+```
+
+---
+
+## Mistake 5: Treating Record Count as Business Count
+
+Suppose:
+
+```bash
+awk '$3=="FAILED" {count++} END {print count}' transactions.log
+```
+
+returns:
+
+```text
+20
+```
+
+This means:
+
+```text
+20 matching records
+```
+
+It does not automatically prove:
+
+```text
+20 unique customers lost money
+```
+
+You may need to consider:
+
+```text
+Duplicate records
+Retries
+Reversals
+Multiple events per transaction
+Final transaction status
+```
+
+---
+
+## Mistake 6: Parsing Human-Oriented Output Blindly
+
+Commands such as:
+
+```text
+ps
+df
+free
+top
+```
+
+can vary across systems and options.
+
+A strong PSA:
+
+```text
+Checks the actual output
+Uses stable command options when possible
+Understands the field meaning
+Tests the parsing logic
+Does not memorize field numbers blindly
+```
+
+---
+
+# 🧪 Complete Ubuntu Practice Lab
+
+## Step 1: Create Practice Directory
+
+```bash
+cd ~
+mkdir awk-practice
+cd awk-practice
+```
+
+---
+
+## Step 2: Create Employee Data
+
+```bash
+cat > employees.txt
+```
+
+Enter:
+
+```text
+101 Ravi Support Hyderabad 45000
+102 Sita Developer Chennai 70000
+103 Raju Support Hyderabad 50000
+104 Anu Tester Bangalore 55000
+105 Kiran Developer Hyderabad 80000
+106 Priya Support Chennai 48000
+107 Arun Tester Hyderabad 60000
+108 Meena Developer Bangalore 75000
+109 Rakesh Support Hyderabad 52000
+110 Kavya Tester Chennai 58000
+```
+
+Press:
+
+```text
+Ctrl + D
+```
+
+---
+
+## Step 3: Print Complete Records
+
+```bash
+awk '{print $0}' employees.txt
+```
+
+---
+
+## Step 4: Print Names
+
+```bash
+awk '{print $2}' employees.txt
+```
+
+---
+
+## Step 5: Print Names and Salaries
+
+```bash
+awk '{print $2, $5}' employees.txt
+```
+
+---
+
+## Step 6: Print Support Employees
+
+```bash
+awk '$3=="Support" {print}' employees.txt
+```
+
+---
+
+## Step 7: Print Hyderabad Employees
+
+```bash
+awk '$4=="Hyderabad" {print}' employees.txt
+```
+
+---
+
+## Step 8: Print Salaries Above 60000
+
+```bash
+awk '$5>60000 {print $2, $5}' employees.txt
+```
+
+---
+
+## Step 9: Count Support Employees
+
+```bash
+awk '$3=="Support" {count++} END {print count+0}' employees.txt
+```
+
+---
+
+## Step 10: Calculate Total Salary
+
+```bash
+awk '{sum+=$5} END {print sum}' employees.txt
+```
+
+---
+
+## Step 11: Calculate Average Salary
+
+```bash
+awk '
+{
+    sum += $5
+}
+END {
+    if (NR > 0)
+        print sum/NR
+}
+' employees.txt
+```
+
+---
+
+## Step 12: Count by Role
+
+```bash
+awk '
+{
+    count[$3]++
+}
+END {
+    for (role in count)
+        print role, count[role]
+}
+' employees.txt
+```
+
+---
+
+## Step 13: Count by Location
+
+```bash
+awk '
+{
+    count[$4]++
+}
+END {
+    for (location in count)
+        print location, count[location]
+}
+' employees.txt
+```
+
+---
+
+## Step 14: Find Maximum Salary
+
+```bash
+awk '
+NR==1 {
+    max=$5
+    name=$2
+}
+$5>max {
+    max=$5
+    name=$2
+}
+END {
+    print name, max
+}
+' employees.txt
+```
+
+---
+
+## Step 15: Format a Report
+
+```bash
+awk '
+BEGIN {
+    printf "%-10s %-12s %10s\n", "NAME", "ROLE", "SALARY"
+}
+{
+    printf "%-10s %-12s %10d\n", $2, $3, $5
+}
+' employees.txt
+```
+
+---
+
+# 🎯 Interview Questions and Answers
+
+## Q1. What is AWK?
+
+AWK is a text-processing language and command-line tool used for field-based processing, pattern matching, calculations, conditions, and report generation.
+
+---
+
+## Q2. What is the basic AWK syntax?
+
+```bash
+awk 'pattern { action }' file
+```
+
+---
+
+## Q3. What is `$0`?
+
+```text
+$0
+→ Complete current record
+```
+
+---
+
+## Q4. What is `$1`?
+
+```text
+$1
+→ First field
+```
+
+---
+
+## Q5. What is `NF`?
+
+```text
+NF
+→ Number of fields in the current record
+```
+
+---
+
+## Q6. What is `$NF`?
+
+```text
+$NF
+→ Last field of the current record
+```
+
+---
+
+## Q7. What is `NR`?
+
+```text
+NR
+→ Overall number of records processed
+```
+
+---
+
+## Q8. What is `FNR`?
+
+```text
+FNR
+→ Record number within the current input file
+```
+
+It resets when AWK starts processing the next file.
+
+---
+
+## Q9. What is the difference between NR and FNR?
+
+```text
+NR
+→ Continues across files
+
+FNR
+→ Resets for each file
+```
+
+---
+
+## Q10. How do you print the second column?
+
+```bash
+awk '{print $2}' file.txt
+```
+
+---
+
+## Q11. How do you use a comma as the separator?
+
+```bash
+awk -F, '{print $2}' file.txt
+```
+
+---
+
+## Q12. What is FS?
+
+```text
+FS
+→ Input Field Separator
+```
+
+---
+
+## Q13. What is OFS?
+
+```text
+OFS
+→ Output Field Separator
+```
+
+---
+
+## Q14. What is BEGIN?
+
+`BEGIN` runs before input records are processed.
+
+Example:
+
+```bash
+awk 'BEGIN {print "START"} {print}' file.txt
+```
+
+---
+
+## Q15. What is END?
+
+`END` runs after all input records have been processed.
+
+Example:
+
+```bash
+awk '{count++} END {print count}' file.txt
+```
+
+---
+
+## Q16. How do you filter salary greater than 50000?
+
+```bash
+awk '$5>50000 {print}' employees.txt
+```
+
+---
+
+## Q17. How do you use AND?
+
+```bash
+awk '$3=="Support" && $4=="Hyderabad" {print}' employees.txt
+```
+
+---
+
+## Q18. How do you use OR?
+
+```bash
+awk '$4=="Hyderabad" || $4=="Chennai" {print}' employees.txt
+```
+
+---
+
+## Q19. How do you count matching records?
+
+```bash
+awk '$3=="FAILED" {count++} END {print count+0}' file.txt
+```
+
+---
+
+## Q20. How do you calculate a total?
+
+```bash
+awk '{sum+=$5} END {print sum}' file.txt
+```
+
+---
+
+## Q21. How do you calculate an average?
+
+```bash
+awk '
+{
+    sum += $5
+}
+END {
+    if (NR > 0)
+        print sum/NR
+}
+' file.txt
+```
+
+---
+
+## Q22. How do you count values by category?
+
+```bash
+awk '
+{
+    count[$3]++
+}
+END {
+    for (item in count)
+        print item, count[item]
+}
+' file.txt
+```
+
+---
+
+## Q23. What is the difference between grep, sed, and awk?
+
+A strong answer:
+
+```text
+grep is mainly used to search and filter matching lines.
+
+sed is mainly used to transform or edit text streams.
+
+awk is mainly used for field-based processing, conditions, calculations, grouping, and report generation.
+```
+
+---
+
+## Q24. How do you print failed transaction IDs?
+
+Suppose:
+
+```text
+TXN1001 SUCCESS 5000
+TXN1002 FAILED 3000
+```
+
+Use:
+
+```bash
+awk '$2=="FAILED" {print $1}' transactions.txt
+```
+
+---
+
+## Q25. How would you use AWK in production support?
+
+A strong answer:
+
+```text
+I use AWK when I need structured text analysis.
+
+For example, I can extract fields from logs, count records by status, identify failed jobs, calculate transaction totals, check command output, group errors by service, and generate simple operational reports.
+
+Before writing AWK logic, I first inspect the actual input format because field positions and delimiters can differ between applications and operating systems.
+```
+
+---
+
+# 📌 Quick Revision
+
+```text
+awk '{print $0}' file
+→ Print complete record
+
+awk '{print $1}' file
+→ Print first field
+
+awk '{print $2,$5}' file
+→ Print fields 2 and 5
+
+awk '{print NF}' file
+→ Print number of fields
+
+awk '{print $NF}' file
+→ Print last field
+
+awk '{print NR,$0}' file
+→ Print record number and record
+
+awk 'NR==5' file
+→ Print record 5
+
+awk 'NR>=3 && NR<=7' file
+→ Print records 3 to 7
+
+awk '$3=="Support"' file
+→ Filter by field value
+
+awk '$5>50000' file
+→ Numeric condition
+
+awk '$3=="Support" && $4=="Hyderabad"' file
+→ AND condition
+
+awk '$4=="Hyderabad" || $4=="Chennai"' file
+→ OR condition
+
+awk '/ERROR/' file
+→ Pattern match
+
+awk '$3 ~ /ERROR/' file
+→ Regex match on field 3
+
+awk -F: '{print $2}' file
+→ Colon separator
+
+awk -F, '{print $2}' file
+→ Simple comma separator
+
+BEGIN
+→ Runs before input
+
+END
+→ Runs after input
+
+FS
+→ Input field separator
+
+OFS
+→ Output field separator
+
+NR
+→ Overall record number
+
+FNR
+→ Current-file record number
+
+NF
+→ Number of fields
+
+$NF
+→ Last field
+```
+
+# Final Practice Challenge
+
+Create this file:
+
+```text
+transactions.txt
+```
+
+with:
+
+```text
+2026-07-08 TXN1001 PaymentService SUCCESS 5000
+2026-07-08 TXN1002 PaymentService FAILED 3000
+2026-07-08 TXN1003 UserService SUCCESS 1000
+2026-07-08 TXN1004 PaymentService FAILED 7000
+2026-07-08 TXN1005 DatabaseService FAILED 2000
+2026-07-08 TXN1006 PaymentService SUCCESS 10000
+2026-07-08 TXN1007 UserService SUCCESS 1500
+2026-07-08 TXN1008 DatabaseService FAILED 4000
+```
+
+Complete these tasks:
+
+1. Print all transaction IDs.
+2. Print service name and status.
+3. Print only failed records.
+4. Print failed transaction IDs.
+5. Count failed records.
+6. Count successful records.
+7. Calculate total successful amount.
+8. Calculate total failed amount.
+9. Count records by service.
+10. Count records by status.
+11. Find the largest transaction amount.
+12. Find the smallest transaction amount.
+13. Print PaymentService failures only.
+14. Print transactions above 5000.
+15. Create a formatted report using `printf`.
+16. Explain `NR`, `FNR`, `NF`, `$NF`, `FS`, and `OFS`.
+17. Explain the difference between `grep`, `sed`, and `awk`.
+
+For PSA preparation, remember this progression:
+
+```text
+grep
+↓
+Find the relevant lines
+
+sed
+↓
+Transform text
+
+awk
+↓
+Analyze fields, apply logic, calculate, group, and report
+```
+
+The main mistake beginners make with AWK is memorizing commands without understanding the data structure.
+
+Before writing:
+
+```bash
+awk '$5=="FAILED" {print $2}' file.txt
+```
+
+first ask:
+
+```text
+What does field 5 actually contain?
+
+What is the separator?
+
+Can the message contain spaces?
+
+Is the input really column-based?
+
+Are there headers?
+
+Can fields be missing?
+
+Is this simple delimited text or real CSV/JSON?
+```
+
+Strong production support work begins with understanding the input format. The AWK command comes after that.
